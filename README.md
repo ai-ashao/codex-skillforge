@@ -1,5 +1,7 @@
 # Codex Skillforge
 
+[简体中文](README.zh-CN.md)
+
 A maintained collection of custom Codex skills for evaluating and improving small web products. Each skill is self-contained: its `SKILL.md` describes when to use it, while bundled references, scripts, and fixtures make the result reproducible.
 
 ## Included skills
