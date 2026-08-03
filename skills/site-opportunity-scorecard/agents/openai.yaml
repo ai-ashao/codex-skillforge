@@ -1,0 +1,7 @@
+interface:
+  display_name: "Site Opportunity Scorecard"
+  short_description: "Decide whether an SEO opportunity should be a site, section, page, or rejected."
+  default_prompt: "Use site-opportunity-scorecard to evaluate this keyword cluster or feature and recommend an independent site, existing-site section, existing-site page, or rejection."
+
+policy:
+  allow_implicit_invocation: true

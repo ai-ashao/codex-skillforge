@@ -1,0 +1,310 @@
+{
+  "audit": {
+    "site": "https://example.com",
+    "mode": "baseline",
+    "profile": "seo-tool"
+  },
+  "raw_score": 51.4,
+  "final_score": null,
+  "coverage": 37.0,
+  "confidence": 34.0,
+  "label": "not scorable",
+  "monetization_status": "not ready",
+  "earned_points": 19.0,
+  "assessed_max_points": 37.0,
+  "triggered_gates": [
+    {
+      "id": "G5",
+      "cap": null,
+      "note": "A confirmed platform-policy restriction blocks the stated monetization model."
+    }
+  ],
+  "categories": {
+    "Product and value proposition": {
+      "earned_points": 5.0,
+      "assessed_max_points": 8.0,
+      "category_max_points": 15.0,
+      "normalized_score": 62.5,
+      "coverage": 53.3
+    },
+    "Core task and UX": {
+      "earned_points": 5.3,
+      "assessed_max_points": 11.0,
+      "category_max_points": 20.0,
+      "normalized_score": 47.7,
+      "coverage": 55.0
+    },
+    "Trust, safety, and compliance": {
+      "earned_points": 2.0,
+      "assessed_max_points": 4.0,
+      "category_max_points": 15.0,
+      "normalized_score": 50.0,
+      "coverage": 26.7
+    },
+    "SEO and indexability": {
+      "earned_points": 3.8,
+      "assessed_max_points": 6.0,
+      "category_max_points": 15.0,
+      "normalized_score": 62.5,
+      "coverage": 40.0
+    },
+    "Content and originality": {
+      "earned_points": 1.0,
+      "assessed_max_points": 4.0,
+      "category_max_points": 10.0,
+      "normalized_score": 25.0,
+      "coverage": 40.0
+    },
+    "Performance and accessibility": {
+      "earned_points": 0.0,
+      "assessed_max_points": 0.0,
+      "category_max_points": 10.0,
+      "normalized_score": null,
+      "coverage": 0.0
+    },
+    "Technical reliability": {
+      "earned_points": 1.5,
+      "assessed_max_points": 2.0,
+      "category_max_points": 10.0,
+      "normalized_score": 75.0,
+      "coverage": 20.0
+    },
+    "Monetization readiness": {
+      "earned_points": 0.5,
+      "assessed_max_points": 2.0,
+      "category_max_points": 5.0,
+      "normalized_score": 25.0,
+      "coverage": 40.0
+    }
+  },
+  "criteria": {
+    "PV1": {
+      "status": "assessed",
+      "rating": 3,
+      "evidence": "B",
+      "points": 3.0,
+      "max_points": 4,
+      "note": "Purpose is clear above the fold."
+    },
+    "PV2": {
+      "status": "assessed",
+      "rating": 2,
+      "evidence": "A",
+      "points": 2.0,
+      "max_points": 4,
+      "note": "Core capability works but one claim is broader than tested behavior."
+    },
+    "PV3": {
+      "status": "unassessed",
+      "max_points": 3,
+      "note": ""
+    },
+    "PV4": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "PV5": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "UX1": {
+      "status": "assessed",
+      "rating": 3,
+      "evidence": "A",
+      "points": 2.3,
+      "max_points": 3,
+      "note": "Primary action is obvious."
+    },
+    "UX2": {
+      "status": "unassessed",
+      "max_points": 3,
+      "note": ""
+    },
+    "UX3": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "UX4": {
+      "status": "assessed",
+      "rating": 2,
+      "evidence": "A",
+      "points": 2.0,
+      "max_points": 4,
+      "note": "Success state works but lacks source and file details."
+    },
+    "UX5": {
+      "status": "assessed",
+      "rating": 1,
+      "evidence": "A",
+      "points": 1.0,
+      "max_points": 4,
+      "note": "Failure state provides little recovery guidance."
+    },
+    "UX6": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "UX7": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "TS1": {
+      "status": "assessed",
+      "rating": 2,
+      "evidence": "B",
+      "points": 2.0,
+      "max_points": 4,
+      "note": "Most claims are conditional; one heading overpromises."
+    },
+    "TS2": {
+      "status": "unassessed",
+      "max_points": 3,
+      "note": ""
+    },
+    "TS3": {
+      "status": "unassessed",
+      "max_points": 3,
+      "note": ""
+    },
+    "TS4": {
+      "status": "unassessed",
+      "max_points": 3,
+      "note": ""
+    },
+    "TS5": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "SEO1": {
+      "status": "assessed",
+      "rating": 2,
+      "evidence": "B",
+      "points": 1.5,
+      "max_points": 3,
+      "note": "Metadata exists but title wording is weak."
+    },
+    "SEO2": {
+      "status": "assessed",
+      "rating": 3,
+      "evidence": "B",
+      "points": 2.3,
+      "max_points": 3,
+      "note": "Robots and sitemap are healthy."
+    },
+    "SEO3": {
+      "status": "unassessed",
+      "max_points": 3,
+      "note": ""
+    },
+    "SEO4": {
+      "status": "unassessed",
+      "max_points": 3,
+      "note": ""
+    },
+    "SEO5": {
+      "status": "unassessed",
+      "max_points": 3,
+      "note": ""
+    },
+    "CO1": {
+      "status": "assessed",
+      "rating": 1,
+      "evidence": "B",
+      "points": 1.0,
+      "max_points": 4,
+      "note": "Most content is generic."
+    },
+    "CO2": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "CO3": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "CO4": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "PA1": {
+      "status": "unassessed",
+      "max_points": 4,
+      "note": "No Lighthouse or field data."
+    },
+    "PA2": {
+      "status": "unassessed",
+      "max_points": 3,
+      "note": ""
+    },
+    "PA3": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "PA4": {
+      "status": "unassessed",
+      "max_points": 1,
+      "note": ""
+    },
+    "TR1": {
+      "status": "assessed",
+      "rating": 3,
+      "evidence": "A",
+      "points": 1.5,
+      "max_points": 2,
+      "note": "Public routes returned expected status codes."
+    },
+    "TR2": {
+      "status": "unassessed",
+      "max_points": 3,
+      "note": ""
+    },
+    "TR3": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "TR4": {
+      "status": "unassessed",
+      "max_points": 2,
+      "note": ""
+    },
+    "TR5": {
+      "status": "unassessed",
+      "max_points": 1,
+      "note": ""
+    },
+    "MR1": {
+      "status": "assessed",
+      "rating": 1,
+      "evidence": "B",
+      "points": 0.5,
+      "max_points": 2,
+      "note": "Original value is currently too thin for monetization confidence."
+    },
+    "MR2": {
+      "status": "unassessed",
+      "max_points": 1,
+      "note": ""
+    },
+    "MR3": {
+      "status": "unassessed",
+      "max_points": 1,
+      "note": ""
+    },
+    "MR4": {
+      "status": "unassessed",
+      "max_points": 1,
+      "note": ""
+    }
+  }
+}

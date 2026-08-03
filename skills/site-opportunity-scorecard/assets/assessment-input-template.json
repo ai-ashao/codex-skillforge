@@ -1,0 +1,63 @@
+{
+  "candidate": {
+    "name": "",
+    "description": "",
+    "primary_user_task": "",
+    "target_market": "",
+    "target_language": "",
+    "business_model": "",
+    "maintenance_constraints": []
+  },
+  "host_site": {
+    "url": "",
+    "positioning": "",
+    "relevant_existing_features": []
+  },
+  "competitors": [
+    {
+      "name": "Site A",
+      "url": "",
+      "homepage_focus": ""
+    },
+    {
+      "name": "Site B",
+      "url": "",
+      "homepage_focus": ""
+    }
+  ],
+  "keyword_data": {
+    "primary_terms": [],
+    "long_tail_terms": [],
+    "source": "",
+    "notes": ""
+  },
+  "opportunity_scores": {
+    "independent_primary_keyword": 0,
+    "serp_breakability": 0,
+    "long_tail_expansion": 0,
+    "user_use_case_difference": 0,
+    "homepage_workflow_difference": 0,
+    "independent_brand_reason": 0,
+    "link_distribution_potential": 0,
+    "independent_content_system": 0,
+    "development_maintenance_economics": 0,
+    "monetization_fit": 0
+  },
+  "risk_scores": {
+    "keyword_overlap": 0,
+    "search_intent_overlap": 0,
+    "product_workflow_overlap": 0,
+    "content_template_overlap": 0,
+    "brand_positioning_ambiguity": 0,
+    "link_authority_fragmentation": 0,
+    "development_maintenance_fragmentation": 0
+  },
+  "hard_gates": [],
+  "hard_gate_examples": [
+    {
+      "reason": "Example only: insufficient evidence for a new domain",
+      "scope": "SITE_ONLY"
+    }
+  ],
+  "overall_confidence": "LOW"
+}

@@ -1,0 +1,80 @@
+{
+  "audit": {
+    "site": "https://example.com",
+    "mode": "baseline",
+    "profile": "seo-tool"
+  },
+  "ratings": {
+    "PV1": {
+      "rating": 3,
+      "evidence": "B",
+      "note": "Purpose is clear above the fold."
+    },
+    "PV2": {
+      "rating": 2,
+      "evidence": "A",
+      "note": "Core capability works but one claim is broader than tested behavior."
+    },
+    "UX1": {
+      "rating": 3,
+      "evidence": "A",
+      "note": "Primary action is obvious."
+    },
+    "UX4": {
+      "rating": 2,
+      "evidence": "A",
+      "note": "Success state works but lacks source and file details."
+    },
+    "UX5": {
+      "rating": 1,
+      "evidence": "A",
+      "note": "Failure state provides little recovery guidance."
+    },
+    "TS1": {
+      "rating": 2,
+      "evidence": "B",
+      "note": "Most claims are conditional; one heading overpromises."
+    },
+    "SEO1": {
+      "rating": 2,
+      "evidence": "B",
+      "note": "Metadata exists but title wording is weak."
+    },
+    "SEO2": {
+      "rating": 3,
+      "evidence": "B",
+      "note": "Robots and sitemap are healthy."
+    },
+    "CO1": {
+      "rating": 1,
+      "evidence": "B",
+      "note": "Most content is generic."
+    },
+    "PA1": {
+      "status": "unassessed",
+      "note": "No Lighthouse or field data."
+    },
+    "TR1": {
+      "rating": 3,
+      "evidence": "A",
+      "note": "Public routes returned expected status codes."
+    },
+    "MR1": {
+      "rating": 1,
+      "evidence": "B",
+      "note": "Original value is currently too thin for monetization confidence."
+    }
+  },
+  "gates": [
+    {
+      "id": "G1",
+      "triggered": false,
+      "note": "Primary task completed with valid input."
+    },
+    {
+      "id": "G5",
+      "triggered": true,
+      "note": "A confirmed platform-policy restriction blocks the stated monetization model."
+    }
+  ]
+}

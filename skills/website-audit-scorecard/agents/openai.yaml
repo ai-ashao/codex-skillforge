@@ -1,0 +1,4 @@
+interface:
+  display_name: "Website Audit Scorecard"
+  short_description: "Score web products with evidence and fixed criteria"
+  default_prompt: "Use $website-audit-scorecard to audit this website, calculate a reproducible score, and produce a prioritized remediation plan."
