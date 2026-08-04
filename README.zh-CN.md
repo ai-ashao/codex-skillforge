@@ -10,6 +10,7 @@
 |---|---|---|
 | [`site-opportunity-scorecard`](skills/site-opportunity-scorecard/) | 判断一个 SEO 关键词簇或产品功能应成为独立网站、现有站专区、单一页面，还是暂缓/放弃。 | 加权机会分和拆站风险分、双语报告模板、报告结构校验。 |
 | [`website-audit-scorecard`](skills/website-audit-scorecard/) | 对已上线的网站或 Web 产品评估产品质量、UX、信任、SEO、技术可靠性和变现准备度。 | 证据加权的覆盖率与置信度、关键 gate、样例 fixture 与回归测试。 |
+| [`web-asset-pipeline`](skills/web-asset-pipeline/) | 将 AI、素材库、设计导出或截图中的视觉素材转为可上线的网站资源。 | 非破坏性素材审计、素材权利记录模板、格式与框架接入指南、回归测试。 |
 
 这些是决策框架，并非 Google、Lighthouse、WCAG 或 AdSense 的官方评分体系。评分必须附带当前证据和覆盖范围说明。
 
@@ -23,7 +24,7 @@ mkdir -p ~/.codex/skills
 cp -R codex-skillforge/skills/site-opportunity-scorecard ~/.codex/skills/
 ```
 
-将 `site-opportunity-scorecard` 替换为 `website-audit-scorecard` 即可安装网站审计 skill。安装后开启新的 Codex 对话；若未立即显示，再重启 Codex。
+将 `site-opportunity-scorecard` 替换为所需 skill，例如 `website-audit-scorecard` 或 `web-asset-pipeline`。安装后开启新的 Codex 对话；若未立即显示，再重启 Codex。
 
 ## 使用
 
@@ -36,6 +37,10 @@ should be an independent site or a section of an existing converter site.
 
 ```text
 Use $website-audit-scorecard to audit https://example.com as a release gate.
+```
+
+```text
+Use $web-asset-pipeline to audit, optimize, and integrate the visual assets for this website.
 ```
 
 在依赖任何评估结论前，请先阅读对应 skill 的 `SKILL.md`，了解所需证据、报告格式和边界。
@@ -60,6 +65,7 @@ skills/
 python3 -B -m unittest discover -s skills/website-audit-scorecard/tests -v
 python3 -B skills/site-opportunity-scorecard/scripts/calculate_score.py \
   skills/site-opportunity-scorecard/assets/assessment-input-template.json
+python3 -B -m unittest discover -s skills/web-asset-pipeline/tests -v
 ```
 
 对于机会评分报告，可校验其结构与语言配置：

@@ -10,6 +10,7 @@ A maintained collection of custom Codex skills for evaluating and improving smal
 |---|---|---|
 | [`site-opportunity-scorecard`](skills/site-opportunity-scorecard/) | Deciding whether an SEO keyword cluster or product feature should be an independent site, an existing-site section, a focused page, or rejected. | Weighted opportunity and separation-risk scoring, bilingual report templates, and report-structure validation. |
 | [`website-audit-scorecard`](skills/website-audit-scorecard/) | Auditing a live site or web product for product quality, UX, trust, SEO, technical reliability, and monetization readiness. | Evidence-weighted coverage and confidence, critical gates, sample fixture, and regression tests. |
+| [`web-asset-pipeline`](skills/web-asset-pipeline/) | Turning visual assets from AI, stock libraries, exports, or screenshots into production-ready web resources. | Non-mutating asset audit, asset-rights manifest template, format and framework integration guidance, and regression tests. |
 
 These are decision frameworks, not official Google, Lighthouse, WCAG, or AdSense scoring systems. Scores must always be accompanied by current evidence and coverage limits.
 
@@ -23,7 +24,7 @@ mkdir -p ~/.codex/skills
 cp -R codex-skillforge/skills/site-opportunity-scorecard ~/.codex/skills/
 ```
 
-Replace `site-opportunity-scorecard` with `website-audit-scorecard` to install the audit skill. Start a new Codex turn after installation; restart Codex if it does not appear immediately.
+Replace `site-opportunity-scorecard` with the skill you need, such as `website-audit-scorecard` or `web-asset-pipeline`. Start a new Codex turn after installation; restart Codex if it does not appear immediately.
 
 ## Use
 
@@ -36,6 +37,10 @@ should be an independent site or a section of an existing converter site.
 
 ```text
 Use $website-audit-scorecard to audit https://example.com as a release gate.
+```
+
+```text
+Use $web-asset-pipeline to audit, optimize, and integrate the visual assets for this website.
 ```
 
 Read each skill's `SKILL.md` for the required evidence, report format, and boundaries before relying on an assessment.
@@ -60,6 +65,7 @@ Run the checks closest to the skill you changed:
 python3 -B -m unittest discover -s skills/website-audit-scorecard/tests -v
 python3 -B skills/site-opportunity-scorecard/scripts/calculate_score.py \
   skills/site-opportunity-scorecard/assets/assessment-input-template.json
+python3 -B -m unittest discover -s skills/web-asset-pipeline/tests -v
 ```
 
 For a scorecard report, validate its structure and language profile:

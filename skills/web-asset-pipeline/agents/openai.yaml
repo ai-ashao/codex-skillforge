@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Asset Pipeline"
+  short_description: "Turn visual assets into production-ready web resources."
+  default_prompt: "Use $web-asset-pipeline to audit, optimize, and integrate visual assets for this website."

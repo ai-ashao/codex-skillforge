@@ -1,0 +1,2 @@
+asset_id,production_path,role,source_type,source_url_or_reference,provider_or_author,acquired_on,license_or_plan,commercial_use_confirmed,attribution_required,attribution_text_or_url,intended_routes,notes
+example-hero,public/images/example-hero-1280.webp,hero,stock,https://provider.example/asset,Example Provider,YYYY-MM-DD,Example commercial license,yes,no,,/,Replace this example before use
