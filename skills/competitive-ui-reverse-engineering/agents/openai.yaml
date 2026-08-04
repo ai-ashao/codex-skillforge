@@ -1,0 +1,4 @@
+interface:
+  display_name: "Competitive UI Analysis"
+  short_description: "Turn visual references into differentiated web page plans."
+  default_prompt: "Use $competitive-ui-reverse-engineering to analyze these competitor references and create a differentiated implementation plan."
