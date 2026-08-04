@@ -2,6 +2,10 @@
 
 [English](README.md) | 简体中文
 
+[![GitHub stars](https://img.shields.io/github/stars/ai-ashao/codex-skillforge?style=flat-square)](https://github.com/ai-ashao/codex-skillforge/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/ai-ashao/codex-skillforge?style=flat-square)](https://github.com/ai-ashao/codex-skillforge/forks)
+[![Last commit](https://img.shields.io/github/last-commit/ai-ashao/codex-skillforge?style=flat-square)](https://github.com/ai-ashao/codex-skillforge/commits/main)
+
 这是一个持续维护的自定义 Codex skills 集合，用于评估和改进小型 Web 产品。每个 skill 都是自包含的：`SKILL.md` 说明适用场景和工作流，配套的参考资料、脚本与样例让结论可复查、可复现。
 
 ## 已收录 skills
