@@ -2,6 +2,7 @@
 
 [English](README.md) | 简体中文
 
+[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/ai-ashao/codex-skillforge?style=flat-square)](https://github.com/ai-ashao/codex-skillforge/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/ai-ashao/codex-skillforge?style=flat-square)](https://github.com/ai-ashao/codex-skillforge/forks)
 [![Last commit](https://img.shields.io/github/last-commit/ai-ashao/codex-skillforge?style=flat-square)](https://github.com/ai-ashao/codex-skillforge/commits/main)
