@@ -1,6 +1,6 @@
 ---
 name: technical-seo-audit
-description: Run an evidence-led technical SEO audit of a public URL using bounded, SSRF-aware deterministic checks for HTTP delivery, indexability signals, robots.txt, sitemaps, canonical URLs, page metadata, headings, links, images, and JSON-LD. Use when a user asks for a technical SEO audit, on-page SEO check, crawlability review, metadata/schema check, or a reproducible URL audit. Use website-audit-scorecard separately for product, UX, trust, monetization, or overall quality scoring. Do not use this skill to make ranking, traffic, or keyword-demand claims without independent Search Console, SERP, or keyword evidence.
+description: Run an evidence-led technical SEO audit of a public URL using bounded, SSRF-aware deterministic checks for HTTP delivery, robots directives, robots.txt, sitemaps, canonical URLs, page metadata, headings, static links, images, JSON-LD, html lang, and hreflang reachability/reciprocity. Use when a user asks for a technical SEO audit, multilingual SEO check, on-page SEO review, crawlability/indexability review, metadata/schema check, or a reproducible URL audit. Use website-audit-scorecard separately for product, UX, trust, monetization, or overall quality scoring. Do not use this skill to make ranking, traffic, or keyword-demand claims without independent Search Console, SERP, or keyword evidence.
 ---
 
 # Technical SEO Audit
@@ -14,6 +14,8 @@ Use deterministic scripts for observable facts and reserve semantic conclusions 
 - Do not infer a target keyword from page copy and then score the page against that inference. Use a user-supplied query when available; otherwise mark intent alignment unassessed.
 - Do not claim indexation, rankings, traffic, Core Web Vitals field data, crawl coverage, or Google Search Console status from a public HTML fetch.
 - Treat `noindex`, a crawler-blocking robots rule, broken canonicalization, malformed JSON-LD, and retrieval failure as evidence to investigate. Confirm intentional exceptions with the user.
+- Treat JSON-LD syntax and declared types as observable; treat schema truthfulness and eligibility as review decisions.
+- For this portfolio, expect multilingual delivery by default. Verify `html lang`, hreflang self-reference, language-code syntax, bounded target reachability, and reciprocal alternates; do not require `x-default` universally.
 - Use only original/current evidence. Do not rely on a cached audit or a competitor’s marketing claims.
 
 ## Safe retrieval boundary
@@ -30,14 +32,17 @@ Record the requested URL, production/staging status, whether the page is expecte
 
 ### 2. Run deterministic checks
 
-From this skill directory, run:
+From this skill directory, use the unified entry point. It expects multilingual pages and validates at most 12 hreflang targets and 12 sitemap documents by default:
 
 ```bash
-python3 -B scripts/check_site.py https://example.com
-python3 -B scripts/check_page.py https://example.com/page --keyword "user-supplied query" --expected-indexable
+python3 -B scripts/audit.py https://example.com/page \
+  --expected-indexable \
+  --keyword "user-supplied query"
 ```
 
-Both scripts output JSON to stdout and do not create or modify the target site. `check_page.py` reports static-HTML limitations. `check_site.py` reads only the supplied origin’s `robots.txt` and discovered/default sitemap; it does not crawl an entire site.
+The command saves a Markdown report plus raw JSON evidence under `reports/`. Use `--single-language` only for a deliberately single-language target, `--skip-hreflang-validation` when external alternate requests are out of scope, and `--output <path>` to choose the report path.
+
+Run `check_site.py` or `check_page.py` directly only when debugging one module. The checks do not create or modify the target site. They inspect the supplied page, its declared alternates within bounds, the origin’s `robots.txt`, and bounded sitemap documents; they do not crawl an entire site.
 
 ### 3. Interpret only what the evidence supports
 
@@ -51,7 +56,7 @@ For semantic search-intent work, require a user query, real Search Console data,
 
 ### 4. Produce the audit
 
-Use `assets/report-template.md`. Include the JSON evidence, impact, exact remediation, owner/next check, and evidence limit for every material finding. Use `P0` only for a confirmed release blocker such as an unintended public `noindex` or crawler-wide block; do not inflate advisory items.
+Start from the generated Markdown and use `assets/report-template.md` when expanding it into a reviewed deliverable. Include the raw JSON evidence, impact, exact remediation, owner/next check, and evidence limit for every material finding. Use `P0` only for a confirmed release blocker such as an unintended public `noindex` or crawler-wide block; do not inflate advisory items.
 
 ### 5. Route adjacent work correctly
 

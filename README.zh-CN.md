@@ -17,7 +17,7 @@
 | [`website-audit-scorecard`](skills/website-audit-scorecard/) | 对已上线的网站或 Web 产品评估产品质量、UX、信任、SEO、技术可靠性和变现准备度。 | 证据加权的覆盖率与置信度、关键 gate、样例 fixture 与回归测试。 |
 | [`web-asset-pipeline`](skills/web-asset-pipeline/) | 将 AI、素材库、设计导出或截图中的视觉素材转为可上线的网站资源。 | 非破坏性素材审计、素材权利记录模板、格式与框架接入指南、回归测试。 |
 | [`competitive-ui-reverse-engineering`](skills/competitive-ui-reverse-engineering/) | 将竞品页面参考和截图转为有差异化的页面方案。 | 证据分层的 UI 拆解、原创性边界、复用分析模板与素材流水线交接。 |
-| [`technical-seo-audit`](skills/technical-seo-audit/) | 审计公开 URL 的技术 SEO 信号，不把通用阈值误判为缺陷。 | 有边界的 SSRF 防护取数、确定性 JSON 检查、证据标签、报告模板与回归测试。 |
+| [`technical-seo-audit`](skills/technical-seo-audit/) | 审计多语言公开 URL 的技术 SEO 信号，不把通用阈值误判为缺陷。 | 统一 Markdown/JSON 报告、有边界的 SSRF 防护、交付与索引信号、robots/sitemap、JSON-LD、hreflang 与 30+ 项回归测试。 |
 
 这些是决策框架，并非 Google、Lighthouse、WCAG 或 AdSense 的官方评分体系。评分必须附带当前证据和覆盖范围说明。
 

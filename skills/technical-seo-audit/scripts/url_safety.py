@@ -121,6 +121,10 @@ def safe_fetch(url: str, timeout: int = 15, max_bytes: int = MAX_RESPONSE_BYTES)
             return FetchResult(current_url, None, {}, None, 0, redirects, str(exc))
 
         headers = dict(response.headers.items())
+        if hasattr(response.headers, "get_all"):
+            x_robots_values = response.headers.get_all("X-Robots-Tag")
+            if x_robots_values:
+                headers["X-Robots-Tag"] = ", ".join(x_robots_values)
         status_code = response.code
         location = headers.get("Location")
         if 300 <= status_code < 400 and location:

@@ -26,5 +26,9 @@ Do not assign priority without stating the production expectation. A `noindex` p
 - Treat word count as a coverage observation. It does not establish thin content, helpfulness, or demand.
 - Treat static HTML image-alt checks as incomplete when client rendering is detected. Empty `alt` can be correct for decorative images.
 - Treat JSON-LD as a machine-readable representation, not a ranking guarantee. Verify that its claims are truthful to the visible product.
+- Treat `html lang` and hreflang syntax, self-reference, HTTP reachability, and reciprocal declarations as observable. Treat language-market mapping and `x-default` necessity as product/SEO review decisions.
+- Treat a target URL missing from a bounded sitemap sample as review-only; the sitemap may be partitioned or intentionally exclude the route.
+- Treat HTTP delivery, meta robots, Googlebot meta, and `X-Robots-Tag` together when assessing indexability intent.
+- Treat static link counts as inventory only. They do not prove link health, crawl depth, anchor quality, or orphan status.
 - Do not evaluate target-query alignment without a user-supplied query or independently gathered SERP/GSC evidence.
 - Do not describe a public fetch as crawl/index verification.
