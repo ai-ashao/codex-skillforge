@@ -5,6 +5,10 @@
 | Field | Value |
 | --- | --- |
 | Target URL | |
+| Requested origin | |
+| Final production URL/origin | |
+| Site signals checked at origin | |
+| Requested/final origin changed | |
 | Production/indexability expectation | |
 | Target language/market | |
 | Multilingual expectation | Yes by default for this portfolio |

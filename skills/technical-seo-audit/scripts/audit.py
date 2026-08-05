@@ -18,6 +18,15 @@ def _safe_cell(value: object) -> str:
     return str(value if value is not None else "—").replace("|", "\\|").replace("\n", " ")
 
 
+def _display_origin(url: str | None) -> str | None:
+    if not url:
+        return None
+    parsed = urlsplit(url if "://" in url else f"https://{url}")
+    if not parsed.scheme or not parsed.netloc:
+        return None
+    return f"{parsed.scheme.lower()}://{parsed.netloc.lower()}"
+
+
 def _rows(evidence: dict[str, object]) -> list[tuple[str, str, str]]:
     rows = []
     site = evidence.get("site", {})
@@ -46,6 +55,10 @@ def render_markdown(evidence: dict[str, object], evidence_path: Path) -> str:
         f"- Expected indexable: `{str(evidence['expected_indexable']).lower()}`",
         f"- Expected multilingual: `{str(evidence['expected_multilingual']).lower()}`",
         f"- Target query supplied: `{evidence.get('keyword') or 'none'}`",
+        f"- Requested origin: `{evidence.get('requested_origin') or 'unavailable'}`",
+        f"- Final production origin: `{evidence.get('final_origin') or 'unavailable'}`",
+        f"- Site signals checked at: `{evidence.get('site_audit_origin') or 'unavailable'}`",
+        f"- Requested/final origin changed: `{str(evidence.get('origin_changed')).lower() if evidence.get('origin_changed') is not None else 'unassessed'}`",
         f"- Raw evidence: `{evidence_path.name}`",
         "- Unassessed by these scripts: GSC/index coverage, server logs, rendered DOM, field Core Web Vitals, rankings, and demand.",
         "",
@@ -74,6 +87,50 @@ def default_report_path(url: str) -> Path:
     return Path("reports") / f"{slug}-technical-seo-audit.md"
 
 
+def collect_evidence(
+    url: str,
+    keyword: str | None,
+    expected_indexable: bool,
+    expected_multilingual: bool,
+    validate_hreflang: bool,
+    max_hreflang: int,
+    max_sitemaps: int,
+    timeout: int,
+) -> dict[str, object]:
+    """Fetch the page first, then check site signals at its final origin."""
+    page = audit_page(
+        url,
+        keyword,
+        expected_indexable,
+        expected_multilingual,
+        validate_hreflang,
+        max_hreflang,
+        timeout,
+    )
+    final_url = page.get("final_url") if isinstance(page.get("final_url"), str) else None
+    site_target = final_url or url
+    site = audit_site(site_target, timeout, max_sitemaps)
+    requested_origin = _display_origin(url)
+    final_origin = _display_origin(final_url)
+    site_audit_origin = site.get("origin") if isinstance(site.get("origin"), str) else _display_origin(site_target)
+    if isinstance(site_audit_origin, str):
+        site_audit_origin = site_audit_origin.rstrip("/")
+    origin_changed = requested_origin != final_origin if requested_origin and final_origin else None
+    return {
+        "target_url": url,
+        "requested_origin": requested_origin,
+        "final_url": final_url,
+        "final_origin": final_origin,
+        "site_audit_origin": site_audit_origin,
+        "origin_changed": origin_changed,
+        "expected_indexable": expected_indexable,
+        "expected_multilingual": expected_multilingual,
+        "keyword": keyword,
+        "site": site,
+        "page": page,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run a unified evidence-led technical SEO audit.")
     parser.add_argument("url")
@@ -87,14 +144,16 @@ def main() -> int:
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     expected_multilingual = not args.single_language
-    evidence = {
-        "target_url": args.url,
-        "expected_indexable": args.expected_indexable,
-        "expected_multilingual": expected_multilingual,
-        "keyword": args.keyword,
-        "site": audit_site(args.url, args.timeout, args.max_sitemaps),
-        "page": audit_page(args.url, args.keyword, args.expected_indexable, expected_multilingual, not args.skip_hreflang_validation, args.max_hreflang, args.timeout),
-    }
+    evidence = collect_evidence(
+        args.url,
+        args.keyword,
+        args.expected_indexable,
+        expected_multilingual,
+        not args.skip_hreflang_validation,
+        args.max_hreflang,
+        args.max_sitemaps,
+        args.timeout,
+    )
     report_path = args.output or default_report_path(args.url)
     evidence_path = report_path.with_suffix(".json")
     report_path.parent.mkdir(parents=True, exist_ok=True)

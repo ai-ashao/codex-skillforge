@@ -9,7 +9,7 @@ Use deterministic scripts for observable facts and reserve semantic conclusions 
 
 ## Core rules
 
-- Audit the current URL, redirect target, and retrieved static HTML. Record any rendering, access, or data limitation.
+- Audit the requested URL, redirect target, and retrieved static HTML. Check robots.txt and sitemaps against the final redirect origin, and record any requested/final origin change.
 - Do not present a title length, description length, word count, H1 count, heading count, or keyword position as a universal pass/fail rule. Treat it as context for review.
 - Do not infer a target keyword from page copy and then score the page against that inference. Use a user-supplied query when available; otherwise mark intent alignment unassessed.
 - Do not claim indexation, rankings, traffic, Core Web Vitals field data, crawl coverage, or Google Search Console status from a public HTML fetch.
@@ -40,7 +40,7 @@ python3 -B scripts/audit.py https://example.com/page \
   --keyword "user-supplied query"
 ```
 
-The command saves a Markdown report plus raw JSON evidence under `reports/`. Use `--single-language` only for a deliberately single-language target, `--skip-hreflang-validation` when external alternate requests are out of scope, and `--output <path>` to choose the report path.
+The command saves a Markdown report plus raw JSON evidence under `reports/`. The evidence distinguishes requested, final, and site-audit origins; reports sitemap documents left queued or excluded by the configured bound; and keeps crawler-scoped response directives separate. Use `--single-language` only for a deliberately single-language target, `--skip-hreflang-validation` when external alternate requests are out of scope, and `--output <path>` to choose the report path.
 
 Run `check_site.py` or `check_page.py` directly only when debugging one module. The checks do not create or modify the target site. They inspect the supplied page, its declared alternates within bounds, the origin’s `robots.txt`, and bounded sitemap documents; they do not crawl an entire site.
 

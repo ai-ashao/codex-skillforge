@@ -124,11 +124,20 @@ def robots_result(target_url: str, timeout: int) -> tuple[dict[str, object], lis
     }, sitemap_urls
 
 
-def _loc_values(root: element_tree.Element) -> list[str]:
+def _local_name(element: element_tree.Element) -> str:
+    return element.tag.rsplit("}", 1)[-1].lower()
+
+
+def _loc_values(root: element_tree.Element, sitemap_type: str) -> list[str]:
+    """Read only url > loc or sitemap > loc, excluding image/video loc nodes."""
+    entry_name = "url" if sitemap_type == "urlset" else "sitemap"
     values = []
-    for element in root.iter():
-        if element.tag.rsplit("}", 1)[-1].lower() == "loc" and element.text:
-            values.append(element.text.strip())
+    for entry in root:
+        if _local_name(entry) != entry_name:
+            continue
+        for element in entry:
+            if _local_name(element) == "loc" and element.text and element.text.strip():
+                values.append(element.text.strip())
     return values
 
 
@@ -137,17 +146,17 @@ def parse_sitemap_document(content: str, source_url: str, target_url: str) -> di
         root = element_tree.fromstring(content)
     except element_tree.ParseError as exc:
         return {"status": "warn", "type": None, "detail": f"Sitemap is not parseable XML: {exc}.", "locations": []}
-    sitemap_type = root.tag.rsplit("}", 1)[-1].lower()
+    sitemap_type = _local_name(root)
     if sitemap_type not in {"urlset", "sitemapindex"}:
         return {"status": "warn", "type": sitemap_type, "detail": f"Unexpected sitemap root element: {sitemap_type}.", "locations": []}
-    locations = _loc_values(root)
+    locations = _loc_values(root, sitemap_type)
     unique = list(dict.fromkeys(locations))
     invalid = [value for value in unique if urlsplit(value).scheme not in {"http", "https"} or not urlsplit(value).netloc]
     source_origin = (urlsplit(source_url).scheme, urlsplit(source_url).netloc)
     foreign_origins = sorted({urlsplit(value).netloc for value in unique if urlsplit(value).netloc and (urlsplit(value).scheme, urlsplit(value).netloc) != source_origin})
     target_included = _normalized_sitemap_url(target_url) in {_normalized_sitemap_url(value) for value in unique}
     return {
-        "status": "warn" if invalid else "pass",
+        "status": "review" if not locations else "warn" if invalid else "pass",
         "type": sitemap_type,
         "entry_count": len(locations),
         "unique_entry_count": len(unique),
@@ -156,7 +165,7 @@ def parse_sitemap_document(content: str, source_url: str, target_url: str) -> di
         "foreign_origins": foreign_origins,
         "target_url_included": target_included,
         "locations": unique,
-        "detail": "Sitemap parsed; inclusion and counts are observations, not index coverage guarantees." if not invalid else "Sitemap contains invalid loc values.",
+        "detail": "Sitemap XML is valid but contains no usable url/sitemap entries." if not locations else "Sitemap contains invalid loc values." if invalid else "Sitemap parsed; inclusion and counts are observations, not index coverage guarantees.",
     }
 
 
@@ -168,10 +177,13 @@ def _normalized_sitemap_url(value: str) -> str:
 def sitemap_result(origin: str, target_url: str, sitemap_urls: list[str], timeout: int, max_sitemaps: int) -> dict[str, object]:
     declared = bool(sitemap_urls)
     initial = [urljoin(origin, value) for value in sitemap_urls] if sitemap_urls else [urljoin(origin, "sitemap.xml")]
-    queue = deque(initial)
-    queued = set(initial)
+    unique_initial = list(dict.fromkeys(initial))
+    document_limit = max(0, max_sitemaps)
+    queue = deque(unique_initial[:document_limit])
+    queued = set(unique_initial)
+    bounded_out = max(0, len(unique_initial) - document_limit)
     documents = []
-    while queue and len(documents) < max_sitemaps:
+    while queue and len(documents) < document_limit:
         candidate = queue.popleft()
         try:
             result = safe_fetch(candidate, timeout=timeout)
@@ -186,24 +198,39 @@ def sitemap_result(origin: str, target_url: str, sitemap_urls: list[str], timeou
         documents.append(parsed)
         if parsed.get("type") == "sitemapindex":
             for child in parsed.get("locations", []):
-                if child not in queued and len(queued) < max_sitemaps:
-                    queued.add(child)
+                parsed_child = urlsplit(child)
+                if parsed_child.scheme not in {"http", "https"} or not parsed_child.netloc:
+                    continue
+                if child in queued:
+                    continue
+                queued.add(child)
+                if len(documents) + len(queue) < document_limit:
                     queue.append(child)
+                else:
+                    bounded_out += 1
     valid = [document for document in documents if document.get("status") == "pass"]
     warnings = [document for document in documents if document.get("status") == "warn"]
+    reviews = [document for document in documents if document.get("status") == "review"]
     target_included = any(document.get("type") == "urlset" and document.get("target_url_included") for document in documents)
-    if valid:
-        status = "warn" if warnings else "pass"
+    if warnings:
+        status = "warn"
+    elif reviews:
+        status = "review"
+    elif valid:
+        status = "pass"
     else:
         status = "warn" if declared else "info"
+    queued_remaining = len(queue)
     return {
         "status": status,
         "declared": declared,
         "documents_checked": len(documents),
-        "documents_not_checked": len(queue),
+        "documents_queued_remaining": queued_remaining,
+        "documents_bounded_out": bounded_out,
+        "documents_not_checked": queued_remaining + bounded_out,
         "target_url_included": target_included,
         "documents": documents,
-        "detail": "Sitemap documents checked within the configured bound; target absence is review-only." if valid else "No valid sitemap document was retrieved within the configured locations/bound.",
+        "detail": "Some sitemap documents were valid XML but had no usable entries; review whether they are intentionally empty." if reviews and not warnings else "Sitemap documents checked within the configured bound; target absence is review-only." if valid else "No valid sitemap document was retrieved within the configured locations/bound.",
     }
 
 

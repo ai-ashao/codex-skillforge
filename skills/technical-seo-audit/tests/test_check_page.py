@@ -6,7 +6,7 @@ from pathlib import Path
 SCRIPTS = Path(__file__).parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-from check_page import analyze_delivery, analyze_html, validate_hreflang_targets  # noqa: E402
+from check_page import analyze_delivery, analyze_html, parse_directives, validate_hreflang_targets  # noqa: E402
 from url_safety import UnsafeUrlError  # noqa: E402
 from unittest.mock import patch
 
@@ -36,6 +36,29 @@ class PageCheckTests(unittest.TestCase):
         self.assertIn("noindex", indexability["directives"])
         self.assertIn("nofollow", indexability["directives"])
 
+    def test_ignores_bingbot_only_x_robots_directives_for_googlebot(self):
+        checks = analyze_html(
+            "<h1>Tool</h1>",
+            "https://example.com/tool",
+            None,
+            True,
+            {"X-Robots-Tag": "bingbot: noindex, nofollow"},
+        )
+        indexability = checks["indexability_directives"]
+        self.assertEqual(indexability["status"], "info")
+        self.assertNotIn("noindex", indexability["directives"])
+        self.assertEqual(indexability["ignored_scoped_directives"]["bingbot"], ["nofollow", "noindex"])
+
+    def test_resets_x_robots_scope_between_response_fields(self):
+        parsed = parse_directives(
+            None,
+            None,
+            "bingbot: noindex, nofollow\nindex, follow",
+            target_agent="googlebot",
+        )
+        self.assertEqual(parsed["directives"], ["follow", "index"])
+        self.assertEqual(parsed["ignored_scoped_directives"]["bingbot"], ["nofollow", "noindex"])
+
     def test_parses_json_ld_graph_types_and_context(self):
         html = '<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite"},{"@type":["Organization","Thing"]}]}</script>'
         check = analyze_html(html, "https://example.com/", None, False)["json_ld"]
@@ -55,6 +78,12 @@ class PageCheckTests(unittest.TestCase):
         self.assertEqual(check["blocks_found"], 2)
         self.assertEqual(check["parseable_blocks"], 2)
 
+    def test_distinguishes_declared_and_nested_json_ld_types(self):
+        html = '<script type="application/ld+json">{"@type":"Product","offers":{"@type":"Offer"}}</script>'
+        check = analyze_html(html, "https://example.com/", None, False)["json_ld"]
+        self.assertEqual(check["top_level_types"], ["Product"])
+        self.assertEqual(check["all_nested_types"], ["Offer", "Product"])
+
     def test_multilingual_page_tracks_self_reference_and_x_default(self):
         html = '<html lang="en"><link rel="alternate" hreflang="en" href="/tool"><link rel="alternate" hreflang="zh-CN" href="/zh/tool"><link rel="alternate" hreflang="x-default" href="/tool"></html>'
         check = analyze_html(html, "https://example.com/tool", None, False, expected_multilingual=True)["hreflang"]
@@ -68,6 +97,25 @@ class PageCheckTests(unittest.TestCase):
         self.assertEqual(check["status"], "warn")
         self.assertTrue(check["invalid_codes"])
         self.assertEqual(check["duplicate_codes"], ["english"])
+
+    def test_reviews_html_lang_self_hreflang_primary_language_mismatch(self):
+        html = '<html lang="fr"><link rel="alternate" hreflang="en-US" href="/tool"></html>'
+        check = analyze_html(html, "https://example.com/tool", None, False, expected_multilingual=True)["hreflang"]
+        self.assertEqual(check["status"], "review")
+        self.assertFalse(check["html_lang_matches_self_reference"])
+
+    def test_accepts_compatible_html_lang_and_regional_self_hreflang(self):
+        html = '<html lang="en"><link rel="alternate" hreflang="en-US" href="/tool"></html>'
+        check = analyze_html(html, "https://example.com/tool", None, False, expected_multilingual=True)["hreflang"]
+        self.assertEqual(check["status"], "info")
+        self.assertTrue(check["html_lang_matches_self_reference"])
+
+    def test_uses_canonical_as_hreflang_self_reference_target(self):
+        html = '<html lang="en"><link rel="canonical" href="https://example.com/tool"><link rel="alternate" hreflang="en" href="/tool"></html>'
+        check = analyze_html(html, "https://example.com/tool?source=redirect", None, False, expected_multilingual=True)["hreflang"]
+        self.assertEqual(check["self_reference_target"], "https://example.com/tool")
+        self.assertTrue(check["has_self_reference"])
+        self.assertEqual(check["status"], "info")
 
     def test_single_language_scope_does_not_claim_declarations_exist(self):
         check = analyze_html("<h1>Tool</h1>", "https://example.com/tool", None, False, expected_multilingual=False)["hreflang"]

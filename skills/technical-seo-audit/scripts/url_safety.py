@@ -104,6 +104,10 @@ def _decode_body(raw: bytes, content_type: str) -> str:
         return raw.decode("utf-8", errors="replace")
 
 
+def _header_value(headers: dict[str, str], name: str, default: str = "") -> str:
+    return next((value for key, value in headers.items() if key.lower() == name.lower()), default)
+
+
 def safe_fetch(url: str, timeout: int = 15, max_bytes: int = MAX_RESPONSE_BYTES) -> FetchResult:
     """Fetch a public URL with redirect-by-redirect validation and body bounds."""
     current_url = validate_public_url(url)
@@ -124,9 +128,11 @@ def safe_fetch(url: str, timeout: int = 15, max_bytes: int = MAX_RESPONSE_BYTES)
         if hasattr(response.headers, "get_all"):
             x_robots_values = response.headers.get_all("X-Robots-Tag")
             if x_robots_values:
-                headers["X-Robots-Tag"] = ", ".join(x_robots_values)
+                # Preserve response-field boundaries so crawler scope does not
+                # accidentally leak from one X-Robots-Tag field into another.
+                headers["X-Robots-Tag"] = "\n".join(x_robots_values)
         status_code = response.code
-        location = headers.get("Location")
+        location = _header_value(headers, "Location")
         if 300 <= status_code < 400 and location:
             redirects.append({"url": current_url, "status_code": status_code})
             if len(redirects) > MAX_REDIRECTS:
@@ -147,7 +153,7 @@ def safe_fetch(url: str, timeout: int = 15, max_bytes: int = MAX_RESPONSE_BYTES)
             current_url,
             status_code,
             headers,
-            _decode_body(raw, headers.get("Content-Type", "")),
+            _decode_body(raw, _header_value(headers, "Content-Type")),
             len(raw),
             redirects,
             None,

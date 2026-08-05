@@ -1,12 +1,14 @@
 import sys
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 
 SCRIPTS = Path(__file__).parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-from check_site import evaluate_robots, parse_robots, parse_sitemap_document  # noqa: E402
+from check_site import evaluate_robots, parse_robots, parse_sitemap_document, sitemap_result  # noqa: E402
 
 
 class RobotsTests(unittest.TestCase):
@@ -70,3 +72,44 @@ class SitemapTests(unittest.TestCase):
         result = parse_sitemap_document("<urlset><url><loc>/relative</loc></url></urlset>", "https://example.com/sitemap.xml", "https://example.com/")
         self.assertEqual(result["status"], "warn")
         self.assertEqual(result["invalid_locations"], ["/relative"])
+
+    def test_ignores_image_loc_when_parsing_page_urls(self):
+        xml = '''<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+        <url><loc>https://example.com/tool</loc><image:image><image:loc>https://cdn.example.com/tool.webp</image:loc></image:image></url>
+        </urlset>'''
+        result = parse_sitemap_document(xml, "https://example.com/sitemap.xml", "https://example.com/tool")
+        self.assertEqual(result["locations"], ["https://example.com/tool"])
+        self.assertEqual(result["foreign_origins"], [])
+
+    def test_reviews_valid_but_empty_sitemap(self):
+        result = parse_sitemap_document("<urlset></urlset>", "https://example.com/sitemap.xml", "https://example.com/")
+        self.assertEqual(result["status"], "review")
+        self.assertEqual(result["entry_count"], 0)
+
+    @patch("check_site.safe_fetch")
+    def test_counts_sitemaps_discarded_by_document_bound(self, fetch):
+        children = "".join(f"<sitemap><loc>https://example.com/{index}.xml</loc></sitemap>" for index in range(5))
+
+        def response(url, timeout):
+            body = f"<sitemapindex>{children}</sitemapindex>" if url.endswith("sitemap.xml") else "<urlset><url><loc>https://example.com/tool</loc></url></urlset>"
+            return SimpleNamespace(error=None, status_code=200, body=body, url=url)
+
+        fetch.side_effect = response
+        result = sitemap_result("https://example.com/", "https://example.com/tool", [], 5, 2)
+        self.assertEqual(result["documents_checked"], 2)
+        self.assertEqual(result["documents_queued_remaining"], 0)
+        self.assertEqual(result["documents_bounded_out"], 4)
+        self.assertEqual(result["documents_not_checked"], 4)
+
+    @patch("check_site.safe_fetch")
+    def test_does_not_fetch_invalid_relative_child_sitemap(self, fetch):
+        fetch.return_value = SimpleNamespace(
+            error=None,
+            status_code=200,
+            body="<sitemapindex><sitemap><loc>/child.xml</loc></sitemap></sitemapindex>",
+            url="https://example.com/sitemap.xml",
+        )
+        result = sitemap_result("https://example.com/", "https://example.com/tool", [], 5, 12)
+        self.assertEqual(fetch.call_count, 1)
+        self.assertEqual(result["documents_checked"], 1)
+        self.assertEqual(result["documents"][0]["invalid_locations"], ["/child.xml"])

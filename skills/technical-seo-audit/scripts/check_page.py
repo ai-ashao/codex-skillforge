@@ -15,6 +15,23 @@ from url_safety import UnsafeUrlError, safe_fetch
 
 
 LANGUAGE_CODE = re.compile(r"^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$")
+ROBOTS_DIRECTIVE_NAMES = {
+    "all",
+    "follow",
+    "index",
+    "indexifembedded",
+    "max-image-preview",
+    "max-snippet",
+    "max-video-preview",
+    "noarchive",
+    "nofollow",
+    "noimageindex",
+    "noindex",
+    "none",
+    "nosnippet",
+    "notranslate",
+    "unavailable_after",
+}
 
 
 def _clean(value: str) -> str:
@@ -26,17 +43,50 @@ def _without_fragment(url: str) -> str:
     return parsed._replace(fragment="").geturl()
 
 
-def _directive_tokens(*values: str | None) -> list[str]:
-    tokens: list[str] = []
-    for value in values:
-        if not value:
-            continue
-        for segment in value.lower().split(","):
-            segment = segment.strip()
-            if ":" in segment and segment.split(":", 1)[0] in {"googlebot", "bingbot"}:
-                segment = segment.split(":", 1)[1].strip()
-            tokens.extend(part for part in segment.split() if part)
-    return sorted(set(tokens))
+def _directive_tokens(value: str | None) -> list[str]:
+    if not value:
+        return []
+    return [token for segment in value.lower().split(",") for token in segment.strip().split() if token]
+
+
+def parse_directives(
+    meta_robots: str | None,
+    meta_googlebot: str | None,
+    x_robots_headers: str | None,
+    target_agent: str = "googlebot",
+) -> dict[str, object]:
+    """Return directives effective for one crawler without merging other scopes."""
+    target_agent = target_agent.lower()
+    effective = _directive_tokens(meta_robots)
+    ignored_scopes: dict[str, list[str]] = {}
+    if target_agent == "googlebot":
+        effective.extend(_directive_tokens(meta_googlebot))
+    elif meta_googlebot:
+        ignored_scopes["googlebot"] = _directive_tokens(meta_googlebot)
+
+    for header_value in (x_robots_headers or "").splitlines():
+        current_scope: str | None = None
+        for raw_segment in header_value.split(","):
+            segment = raw_segment.strip()
+            if not segment:
+                continue
+            scoped = re.match(r"^([A-Za-z][A-Za-z0-9_-]*)\s*:\s*(.*)$", segment)
+            if scoped and scoped.group(1).lower() not in ROBOTS_DIRECTIVE_NAMES:
+                current_scope = scoped.group(1).lower()
+                segment = scoped.group(2).strip()
+            tokens = _directive_tokens(segment)
+            if current_scope is None or current_scope == target_agent:
+                effective.extend(tokens)
+            elif tokens:
+                ignored_scopes.setdefault(current_scope, []).extend(tokens)
+
+    return {
+        "target_agent": target_agent,
+        "directives": sorted(set(effective)),
+        "ignored_scoped_directives": {
+            scope: sorted(set(tokens)) for scope, tokens in sorted(ignored_scopes.items())
+        },
+    }
 
 
 class PageParser(HTMLParser):
@@ -179,25 +229,37 @@ def analyze_delivery(http_status: int | None, headers: dict[str, str], expected_
 
 def _json_ld_check(blocks: list[str]) -> dict[str, object]:
     errors: list[dict[str, object]] = []
-    types: set[str] = set()
+    top_level_types: set[str] = set()
+    all_nested_types: set[str] = set()
     contexts: set[str] = set()
     parsed_blocks = 0
 
-    def visit(value: Any) -> None:
+    def add_types(value: Any, destination: set[str]) -> None:
+        if isinstance(value, str):
+            destination.add(value)
+        elif isinstance(value, list):
+            destination.update(str(item) for item in value)
+
+    def visit_declared_nodes(value: Any) -> None:
         if isinstance(value, list):
             for item in value:
-                visit(item)
+                visit_declared_nodes(item)
         elif isinstance(value, dict):
             context = value.get("@context")
             if isinstance(context, str):
                 contexts.add(context)
-            schema_type = value.get("@type")
-            if isinstance(schema_type, str):
-                types.add(schema_type)
-            elif isinstance(schema_type, list):
-                types.update(str(item) for item in schema_type)
+            add_types(value.get("@type"), top_level_types)
             if "@graph" in value:
-                visit(value["@graph"])
+                visit_declared_nodes(value["@graph"])
+
+    def visit_all_nodes(value: Any) -> None:
+        if isinstance(value, list):
+            for item in value:
+                visit_all_nodes(item)
+        elif isinstance(value, dict):
+            add_types(value.get("@type"), all_nested_types)
+            for child in value.values():
+                visit_all_nodes(child)
 
     for index, raw in enumerate(blocks):
         try:
@@ -206,46 +268,61 @@ def _json_ld_check(blocks: list[str]) -> dict[str, object]:
             errors.append({"block": index + 1, "line": exc.lineno, "column": exc.colno, "message": exc.msg})
             continue
         parsed_blocks += 1
-        visit(value)
+        visit_declared_nodes(value)
+        visit_all_nodes(value)
     return {
         "status": "warn" if errors else "info",
         "blocks_found": len(blocks),
         "parseable_blocks": parsed_blocks,
         "parse_errors": errors,
-        "types": sorted(types),
+        "types": sorted(top_level_types),
+        "top_level_types": sorted(top_level_types),
+        "all_nested_types": sorted(all_nested_types),
         "contexts": sorted(contexts),
-        "semantic_review_required": bool(types),
+        "semantic_review_required": bool(all_nested_types),
         "detail": "JSON-LD syntax errors observed." if errors else "JSON-LD parsed; verify that types and claims match visible page content." if blocks else "No JSON-LD block observed; absence is not automatically a defect.",
     }
 
 
-def _hreflang_check(parser: PageParser, final_url: str, expected_multilingual: bool) -> dict[str, object]:
+def _hreflang_check(parser: PageParser, self_reference_url: str, expected_multilingual: bool) -> dict[str, object]:
     entries = parser.hreflang_entries
     codes = [entry["hreflang"] for entry in entries]
     comparable_codes = [code.lower() for code in codes]
     invalid = sorted({code for code in codes if code.lower() != "x-default" and not LANGUAGE_CODE.fullmatch(code)})
     duplicates = sorted({code for code in comparable_codes if comparable_codes.count(code) > 1})
-    self_reference = any(_without_fragment(entry["href"]) == _without_fragment(final_url) for entry in entries)
+    self_entries = [entry for entry in entries if _without_fragment(entry["href"]) == _without_fragment(self_reference_url)]
+    self_reference = bool(self_entries)
+    self_codes = sorted({entry["hreflang"] for entry in self_entries if entry["hreflang"].lower() != "x-default"})
+    lang_matches_self = None
+    if parser.html_lang and self_codes:
+        html_primary = parser.html_lang.lower().split("-", 1)[0]
+        lang_matches_self = any(code.lower().split("-", 1)[0] == html_primary for code in self_codes)
     has_x_default = "x-default" in comparable_codes
     issues = []
+    review_issues = []
     if expected_multilingual and not parser.html_lang:
         issues.append("Missing html lang on a page expected to be multilingual.")
     if expected_multilingual and not entries:
         issues.append("No hreflang alternates on a page expected to be multilingual.")
     if entries and not self_reference:
-        issues.append("Hreflang set has no self-reference for the fetched final URL.")
+        issues.append("Hreflang set has no self-reference for the canonical URL or fetched final URL used as its fallback.")
     if invalid:
         issues.append("Invalid or unsupported hreflang code syntax observed.")
     if duplicates:
         issues.append("Duplicate hreflang codes observed.")
-    detail = " ".join(issues)
+    if lang_matches_self is False:
+        review_issues.append("html lang and the self-referencing hreflang use different primary languages; review the declarations.")
+    detail = " ".join([*issues, *review_issues])
     if not detail:
         detail = "Language declarations observed; x-default is optional and language-tag casing is not significant." if parser.html_lang or entries else "No language declarations observed; multilingual delivery was not expected for this run."
     return {
-        "status": "warn" if issues else "info",
+        "status": "warn" if issues else "review" if review_issues else "info",
         "html_lang": parser.html_lang,
         "entries": entries,
+        "self_reference_target": self_reference_url,
         "has_self_reference": self_reference,
+        "self_reference_codes": self_codes,
+        "html_lang_matches_self_reference": lang_matches_self,
         "has_x_default": has_x_default,
         "invalid_codes": invalid,
         "duplicate_codes": duplicates,
@@ -274,7 +351,8 @@ def analyze_html(
     missing_alt = sum(1 for image in parser.images if not image["has_alt"])
     empty_alt = sum(1 for image in parser.images if image["empty_alt"])
     x_robots = next((value for key, value in headers.items() if key.lower() == "x-robots-tag"), None)
-    directives = _directive_tokens(parser.robots, parser.googlebot, x_robots)
+    parsed_directives = parse_directives(parser.robots, parser.googlebot, x_robots, target_agent="googlebot")
+    directives = parsed_directives["directives"]
     noindex = "noindex" in directives or "none" in directives
     checks: dict[str, object] = {
         "delivery": analyze_delivery(http_status, headers, expected_indexable),
@@ -282,13 +360,13 @@ def analyze_html(
         "meta_description": {"status": "info" if parser.meta_description is not None else "review", "value": parser.meta_description, "length": len(parser.meta_description or ""), "detail": "Meta description found; assess truthfulness and snippet usefulness in context." if parser.meta_description is not None else "No meta description in static HTML; review whether a controlled snippet is useful for this route."},
         "headings": {"status": "warn" if not parser.headings["h1"] else "info", "h1": parser.headings["h1"], "counts": {tag: len(values) for tag, values in parser.headings.items()}, "detail": "No H1 found in static HTML." if not parser.headings["h1"] else "Heading structure observed; assess hierarchy against the page task rather than a fixed count."},
         "canonical": {"status": "info" if not resolved_canonical or _without_fragment(resolved_canonical) == _without_fragment(final_url) else "review", "value": resolved_canonical, "detail": "No canonical declared; this can be valid for a single canonical URL." if not resolved_canonical else "Canonical matches fetched final URL." if _without_fragment(resolved_canonical) == _without_fragment(final_url) else "Canonical differs from fetched final URL; confirm whether consolidation is intentional."},
-        "indexability_directives": {"status": "fail" if noindex and expected_indexable else "review" if noindex else "info", "meta_robots": parser.robots, "meta_googlebot": parser.googlebot, "x_robots_tag": x_robots, "directives": directives, "detail": "noindex observed on a route expected to be indexable." if noindex and expected_indexable else "noindex observed; confirm the route is intentionally excluded." if noindex else "No noindex directive observed in static HTML or response headers."},
+        "indexability_directives": {"status": "fail" if noindex and expected_indexable else "review" if noindex else "info", "target_agent": parsed_directives["target_agent"], "meta_robots": parser.robots, "meta_googlebot": parser.googlebot, "x_robots_tag": x_robots, "directives": directives, "ignored_scoped_directives": parsed_directives["ignored_scoped_directives"], "detail": "noindex observed on a route expected to be indexable." if noindex and expected_indexable else "noindex observed; confirm the route is intentionally excluded." if noindex else "No noindex directive observed for the target crawler in static HTML or response headers."},
         "images": {"status": "warn" if missing_alt else "info", "count": len(parser.images), "missing_alt_attribute": missing_alt, "empty_alt": empty_alt, "detail": "Some images lack an alt attribute; inspect whether they carry content." if missing_alt else "No missing alt attributes observed; empty alt can be correct for decoration."},
         "static_link_inventory": {"status": "info", "internal": parser.internal_links, "external": parser.external_links, "detail": "Static link counts do not test broken links, depth, orphaning, anchor quality, or rendered links."},
         "content": {"status": "info", "word_count": word_count, "detail": "Word count is an observation, not a content-quality or ranking score."},
         "rendering": {"status": "unassessed" if parser.script_count and word_count < 40 else "info", "script_count": parser.script_count, "detail": "Static HTML has little text and scripts are present; inspect the rendered DOM separately." if parser.script_count and word_count < 40 else "This script evaluates static HTML only; browser-rendered state remains outside scope."},
         "json_ld": _json_ld_check(parser.json_ld_blocks),
-        "hreflang": _hreflang_check(parser, final_url, expected_multilingual),
+        "hreflang": _hreflang_check(parser, resolved_canonical or final_url, expected_multilingual),
     }
     if keyword:
         haystack = " ".join([title or "", *parser.headings["h1"]]).lower()
@@ -328,7 +406,8 @@ def audit_page(url: str, keyword: str | None = None, expected_indexable: bool = 
     checks = analyze_html(result.body or "", result.url, keyword, expected_indexable, result.headers, result.status_code, expected_multilingual)
     hreflang = checks["hreflang"]
     if validate_hreflang and isinstance(hreflang, dict) and hreflang["entries"]:
-        hreflang["validation"] = validate_hreflang_targets(hreflang["entries"], result.url, timeout, max_hreflang)
+        reciprocal_source = hreflang.get("self_reference_target") or result.url
+        hreflang["validation"] = validate_hreflang_targets(hreflang["entries"], reciprocal_source, timeout, max_hreflang)
         if hreflang["validation"]["status"] == "warn":
             hreflang["status"] = "warn"
             hreflang["detail"] = f"{hreflang['detail']} {hreflang['validation']['detail']}"
