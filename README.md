@@ -17,6 +17,7 @@ A maintained collection of custom Codex skills for evaluating and improving smal
 | [`website-audit-scorecard`](skills/website-audit-scorecard/) | Auditing a live site or web product for product quality, UX, trust, SEO, technical reliability, and monetization readiness. | Evidence-weighted coverage and confidence, critical gates, sample fixture, and regression tests. |
 | [`web-asset-pipeline`](skills/web-asset-pipeline/) | Turning visual assets from AI, stock libraries, exports, or screenshots into production-ready web resources. | Non-mutating asset audit, asset-rights manifest template, format and framework integration guidance, and regression tests. |
 | [`competitive-ui-reverse-engineering`](skills/competitive-ui-reverse-engineering/) | Turning competitor-page references and screenshots into differentiated page plans. | Evidence-aware UI decomposition, originality guardrails, reusable analysis template, and asset-pipeline handoff. |
+| [`technical-seo-audit`](skills/technical-seo-audit/) | Auditing a public URL’s technical SEO signals without treating generic thresholds as defects. | Bounded SSRF-aware retrieval, deterministic JSON checks, evidence labels, report template, and regression tests. |
 
 These are decision frameworks, not official Google, Lighthouse, WCAG, or AdSense scoring systems. Scores must always be accompanied by current evidence and coverage limits.
 
@@ -30,7 +31,7 @@ mkdir -p ~/.codex/skills
 cp -R codex-skillforge/skills/site-opportunity-scorecard ~/.codex/skills/
 ```
 
-Replace `site-opportunity-scorecard` with the skill you need, such as `website-audit-scorecard`, `web-asset-pipeline`, or `competitive-ui-reverse-engineering`. Start a new Codex turn after installation; restart Codex if it does not appear immediately.
+Replace `site-opportunity-scorecard` with the skill you need, such as `website-audit-scorecard`, `technical-seo-audit`, `web-asset-pipeline`, or `competitive-ui-reverse-engineering`. Start a new Codex turn after installation; restart Codex if it does not appear immediately.
 
 ## Use
 
@@ -51,6 +52,10 @@ Use $web-asset-pipeline to audit, optimize, and integrate the visual assets for 
 
 ```text
 Use $competitive-ui-reverse-engineering to analyze these competitor references and create a differentiated implementation plan.
+```
+
+```text
+Use $technical-seo-audit to run a technical SEO audit for this URL and state the evidence limits.
 ```
 
 Read each skill's `SKILL.md` for the required evidence, report format, and boundaries before relying on an assessment.
@@ -76,6 +81,7 @@ python3 -B -m unittest discover -s skills/website-audit-scorecard/tests -v
 python3 -B skills/site-opportunity-scorecard/scripts/calculate_score.py \
   skills/site-opportunity-scorecard/assets/assessment-input-template.json
 python3 -B -m unittest discover -s skills/web-asset-pipeline/tests -v
+python3 -B -m unittest discover -s skills/technical-seo-audit/tests -v
 ```
 
 For a scorecard report, validate its structure and language profile:

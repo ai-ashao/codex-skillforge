@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical SEO Audit"
+  short_description: "Run evidence-led technical SEO checks without rigid score rules."
+  default_prompt: "Use $technical-seo-audit to run a technical SEO audit for this URL and state the evidence limits."
