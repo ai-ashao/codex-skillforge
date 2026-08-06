@@ -18,8 +18,9 @@ A maintained collection of custom Codex skills for evaluating and improving smal
 | [`web-asset-pipeline`](skills/web-asset-pipeline/) | Turning visual assets from AI, stock libraries, exports, or screenshots into production-ready web resources. | Non-mutating asset audit, asset-rights manifest template, format and framework integration guidance, and regression tests. |
 | [`competitive-ui-reverse-engineering`](skills/competitive-ui-reverse-engineering/) | Turning competitor-page references and screenshots into differentiated page plans. | Evidence-aware UI decomposition, originality guardrails, reusable analysis template, and asset-pipeline handoff. |
 | [`technical-seo-audit`](skills/technical-seo-audit/) | Auditing a multilingual public URL’s technical SEO signals without treating generic thresholds as defects. | Unified Markdown/JSON report, final-origin site checks, bounded SSRF-aware retrieval, crawler-scoped indexability, robots/sitemaps, JSON-LD, hreflang, and 40+ regression tests. |
+| [`reference-website-builder`](skills/reference-website-builder/) | Reconstructing an explicitly provided page inside an existing product before safely adapting it. | Page-scoped evidence templates, temporary-asset isolation, centralized asset mapping, validation tooling, and a production release gate. |
 
-These are decision frameworks, not official Google, Lighthouse, WCAG, or AdSense scoring systems. Scores must always be accompanied by current evidence and coverage limits.
+These are reusable workflows and decision frameworks, not official Google, Lighthouse, WCAG, or AdSense scoring systems. Scores must always be accompanied by current evidence and coverage limits.
 
 ## Install a skill
 
@@ -31,7 +32,7 @@ mkdir -p ~/.codex/skills
 cp -R codex-skillforge/skills/site-opportunity-scorecard ~/.codex/skills/
 ```
 
-Replace `site-opportunity-scorecard` with the skill you need, such as `website-audit-scorecard`, `technical-seo-audit`, `web-asset-pipeline`, or `competitive-ui-reverse-engineering`. Start a new Codex turn after installation; restart Codex if it does not appear immediately.
+Replace `site-opportunity-scorecard` with the skill you need, such as `website-audit-scorecard`, `technical-seo-audit`, `web-asset-pipeline`, `competitive-ui-reverse-engineering`, or `reference-website-builder`. Start a new Codex turn after installation; restart Codex if it does not appear immediately.
 
 ## Use
 
@@ -58,6 +59,10 @@ Use $competitive-ui-reverse-engineering to analyze these competitor references a
 Use $technical-seo-audit to run a technical SEO audit for this URL and state the evidence limits.
 ```
 
+```text
+Use $reference-website-builder to reconstruct this exact page inside the current project while preserving existing business infrastructure.
+```
+
 Read each skill's `SKILL.md` for the required evidence, report format, and boundaries before relying on an assessment.
 
 ## Repository layout
@@ -82,6 +87,8 @@ python3 -B skills/site-opportunity-scorecard/scripts/calculate_score.py \
   skills/site-opportunity-scorecard/assets/assessment-input-template.json
 python3 -B -m unittest discover -s skills/web-asset-pipeline/tests -v
 python3 -B -m unittest discover -s skills/technical-seo-audit/tests -v
+python3 -B skills/reference-website-builder/scripts/validate_skill.py \
+  skills/reference-website-builder
 ```
 
 For a scorecard report, validate its structure and language profile:

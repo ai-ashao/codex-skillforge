@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "pageSlug": "replace-me",
+  "sourcePages": [
+    "https://example.com/page"
+  ],
+  "brandTerms": [
+    "Example Brand"
+  ],
+  "temporaryServedRoot": "public/__reference__/replace-me",
+  "rawArchiveRoot": ".reference-assets/replace-me/raw",
+  "assetMapPath": "src/config/reference-assets.ts",
+  "productionReady": false,
+  "assets": [
+    {
+      "id": "page.hero.background",
+      "type": "image",
+      "sourcePage": "https://example.com/page",
+      "sourceUrl": "https://example.com/assets/hero.webp",
+      "sourceHost": "example.com",
+      "usage": "Hero background layer",
+      "temporaryPath": "/__reference__/replace-me/hero-background.webp",
+      "replacementPath": null,
+      "replacementConstraints": {
+        "width": 1600,
+        "height": 900,
+        "aspectRatio": "16:9",
+        "transparent": false,
+        "focalPoint": "center",
+        "notes": "Preserve low-contrast background behind heading"
+      },
+      "status": "temporary",
+      "productionApproved": false,
+      "licenseOrAuthorization": null,
+      "notes": "Development reconstruction only"
+    }
+  ]
+}

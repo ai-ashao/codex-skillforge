@@ -18,8 +18,9 @@
 | [`web-asset-pipeline`](skills/web-asset-pipeline/) | 将 AI、素材库、设计导出或截图中的视觉素材转为可上线的网站资源。 | 非破坏性素材审计、素材权利记录模板、格式与框架接入指南、回归测试。 |
 | [`competitive-ui-reverse-engineering`](skills/competitive-ui-reverse-engineering/) | 将竞品页面参考和截图转为有差异化的页面方案。 | 证据分层的 UI 拆解、原创性边界、复用分析模板与素材流水线交接。 |
 | [`technical-seo-audit`](skills/technical-seo-audit/) | 审计多语言公开 URL 的技术 SEO 信号，不把通用阈值误判为缺陷。 | 统一 Markdown/JSON 报告、有边界的 SSRF 防护、交付与索引信号、robots/sitemap、JSON-LD、hreflang 与 30+ 项回归测试。 |
+| [`reference-website-builder`](skills/reference-website-builder/) | 在现有产品中高保真重建明确指定的单个页面，再进行安全适配。 | 页面级证据模板、临时素材隔离、集中式素材映射、校验工具与生产发布 gate。 |
 
-这些是决策框架，并非 Google、Lighthouse、WCAG 或 AdSense 的官方评分体系。评分必须附带当前证据和覆盖范围说明。
+这些是可复用的工作流与决策框架，并非 Google、Lighthouse、WCAG 或 AdSense 的官方评分体系。评分必须附带当前证据和覆盖范围说明。
 
 ## 安装 skill
 
@@ -31,7 +32,7 @@ mkdir -p ~/.codex/skills
 cp -R codex-skillforge/skills/site-opportunity-scorecard ~/.codex/skills/
 ```
 
-将 `site-opportunity-scorecard` 替换为所需 skill，例如 `website-audit-scorecard`、`technical-seo-audit`、`web-asset-pipeline` 或 `competitive-ui-reverse-engineering`。安装后开启新的 Codex 对话；若未立即显示，再重启 Codex。
+将 `site-opportunity-scorecard` 替换为所需 skill，例如 `website-audit-scorecard`、`technical-seo-audit`、`web-asset-pipeline`、`competitive-ui-reverse-engineering` 或 `reference-website-builder`。安装后开启新的 Codex 对话；若未立即显示，再重启 Codex。
 
 ## 使用
 
@@ -58,6 +59,10 @@ Use $competitive-ui-reverse-engineering to analyze these competitor references a
 Use $technical-seo-audit to run a technical SEO audit for this URL and state the evidence limits.
 ```
 
+```text
+使用 $reference-website-builder 在当前项目中重建这个明确指定的页面，并保留现有业务基础设施。
+```
+
 在依赖任何评估结论前，请先阅读对应 skill 的 `SKILL.md`，了解所需证据、报告格式和边界。
 
 ## 仓库结构
@@ -82,6 +87,8 @@ python3 -B skills/site-opportunity-scorecard/scripts/calculate_score.py \
   skills/site-opportunity-scorecard/assets/assessment-input-template.json
 python3 -B -m unittest discover -s skills/web-asset-pipeline/tests -v
 python3 -B -m unittest discover -s skills/technical-seo-audit/tests -v
+python3 -B skills/reference-website-builder/scripts/validate_skill.py \
+  skills/reference-website-builder
 ```
 
 对于机会评分报告，可校验其结构与语言配置：
