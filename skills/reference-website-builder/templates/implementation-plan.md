@@ -17,6 +17,14 @@ Risk classes: safe-local / shared-sensitive / business-critical.
 
 ## Component boundaries
 
+## Design language implementation map
+
+- Canonical artifact: `design-language.md`
+- Token mapping:
+- Shared component mapping:
+- Intentional exceptions:
+- Production adaptation sequence:
+
 ## Routes and locales
 
 ## Existing modules to reuse

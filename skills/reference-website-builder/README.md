@@ -35,6 +35,7 @@ public/__reference__/<slug>/        # 开发阶段临时展示
 src/config/reference-assets.ts      # 统一素材映射
 
 docs/reference-build/<slug>/
+  design-language.md                 # 观察、原则、目标适配与生产差异化契约
   asset-manifest.json
   asset-provenance.md
   replacement-checklist.md
@@ -67,6 +68,7 @@ Release status: BLOCKED
 
 - 页面级 URL-to-code，不自动扩展为整站克隆
 - 高还原页面布局、设计语言和响应式
+- 强制生成 `design-language.md`，分离参考观察、可复用原则和目标产品适配
 - 检查点击、Hover、键盘、滚动、Sticky、自动播放、拖拽等交互
 - 提取 computed style 和多层素材组合
 - 现有项目优先，不强制新建 Next.js/Tailwind/shadcn 脚手架
@@ -99,6 +101,7 @@ reference-website-builder/
 │   ├── page-topology.md
 │   ├── behaviors.md
 │   ├── original-design-brief.md
+│   ├── design-language.md
 │   ├── implementation-plan.md
 │   ├── component-spec.md
 │   ├── asset-manifest.json
@@ -170,6 +173,8 @@ https://inkfox.app/
 保留当前项目的框架、路由、多语言、登录、积分、支付、Analytics、SEO 和部署结构。
 先完成高保真重建与视觉 QA，再替换品牌、文案和素材。上线前运行生产门禁；存在临时素材时不得标记为可发布。
 ```
+
+重建、重建并适配、自有迁移模式会在 `docs/reference-build/<slug>/design-language.md` 中持续维护设计规则。它允许本地阶段精确校准，但同时要求生产版本完成 `Production adaptation contract` 和 `Must replace`，防止把竞品身份与标志性表达原样带到上线版本。
 
 ## 不适合
 

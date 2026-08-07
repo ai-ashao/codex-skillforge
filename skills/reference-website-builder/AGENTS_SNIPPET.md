@@ -5,7 +5,7 @@
 ```markdown
 ## Available skills
 
-- reference-website-builder: Reconstruct an explicitly provided web page with high fidelity, including UI design language, responsive layout, animation, interactions, and layered media, then adapt it inside the existing repository. It is page-scoped and must not automatically crawl the whole site. Development-only target assets may be isolated and mapped for fidelity, but production release is blocked until temporary assets, target identity, copy, metadata, and hotlinks are replaced or authorized. Preserve the current stack, routes, i18n, auth, payments, analytics, SEO, and deployment conventions. (file: ~/.agents/skills/reference-website-builder/SKILL.md)
+- reference-website-builder: Reconstruct an explicitly provided web page with high fidelity, including UI design language, responsive layout, animation, interactions, and layered media, then adapt it inside the existing repository. It is page-scoped and must not automatically crawl the whole site. Reconstruction and migration modes require a durable `design-language.md` that separates evidence-backed observations, reusable principles, target adaptations, and production `Must replace` items. Development-only target assets may be isolated and mapped for fidelity, but production release is blocked until temporary assets, target identity, copy, metadata, hotlinks, and design-language blockers are replaced or authorized. Preserve the current stack, routes, i18n, auth, payments, analytics, SEO, and deployment conventions. (file: ~/.agents/skills/reference-website-builder/SKILL.md)
 ```
 
 项目本地安装时可改为：

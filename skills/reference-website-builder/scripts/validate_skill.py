@@ -24,6 +24,7 @@ REQUIRED_FILES = [
     "templates/page-topology.md",
     "templates/behaviors.md",
     "templates/original-design-brief.md",
+    "templates/design-language.md",
     "templates/implementation-plan.md",
     "templates/component-spec.md",
     "templates/asset-manifest.json",
@@ -105,10 +106,55 @@ def main() -> int:
             "asset-manifest.json",
             "check-reference-assets.mjs",
             "Do not crawl the sitemap",
+            "templates/design-language.md",
+            "docs/reference-build/<slug>/design-language.md",
+            "production adaptation contract",
+            "Must replace",
         ]
         for phrase in required_phrases:
             if phrase not in text:
                 fail(f"SKILL.md is missing required workflow phrase: {phrase}", errors)
+
+    design_language = root / "templates/design-language.md"
+    if design_language.is_file():
+        design_text = design_language.read_text(encoding="utf-8")
+        required_headings = [
+            "## Local reconstruction contract",
+            "## Production adaptation contract",
+            "## Typography",
+            "## Colors",
+            "## Layout and spacing",
+            "## Surfaces and depth",
+            "## Components",
+            "## Interactions and motion",
+            "## Responsive behavior",
+            "## Accessibility",
+            "## Must replace",
+            "## QA recalibration log",
+            "## Production release checklist",
+        ]
+        for heading in required_headings:
+            if heading not in design_text:
+                fail(f"templates/design-language.md is missing required heading: {heading}", errors)
+
+        required_design_phrases = [
+            "Observed",
+            "Measured",
+            "Reusable principle",
+            "Target adaptation",
+            "PRODUCTION_READY=false",
+            "production blocker",
+        ]
+        for phrase in required_design_phrases:
+            if phrase not in design_text:
+                fail(f"templates/design-language.md is missing required contract phrase: {phrase}", errors)
+
+    handoff_requirements = root / "SKILL.md"
+    if handoff_requirements.is_file():
+        handoff_text = handoff_requirements.read_text(encoding="utf-8")
+        handoff_section = handoff_text.split("### Phase 11 — Handoff", 1)
+        if len(handoff_section) != 2 or "design-language.md" not in handoff_section[1].split("## Failure handling", 1)[0]:
+            fail("SKILL.md handoff requirements must include design-language.md", errors)
 
     installer = root / "scripts/install.sh"
     if installer.is_file():

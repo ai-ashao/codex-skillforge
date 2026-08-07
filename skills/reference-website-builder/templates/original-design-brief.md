@@ -14,6 +14,8 @@
 
 ## UI design language observations
 
+Canonical artifact: `design-language.md`. Summarize only the rules needed to frame this brief; keep evidence, reusable principles, target adaptations, and `Must replace` items in the canonical artifact.
+
 - Typography:
 - Color:
 - Radius:

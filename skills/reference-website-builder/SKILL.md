@@ -1,8 +1,7 @@
 ---
 name: reference-website-builder
-description: Inspect an explicitly provided web page and reconstruct its UI design language, layout, responsive behavior, motion, interactions, and layered media inside an existing project. Use for page-level URL-to-code work, high-fidelity landing-page or workbench reconstruction, competitor-inspired UI adaptation, and authorized migrations. Development-only reference assets may be downloaded into isolated directories, but production release is blocked until branding, copy, metadata, and unapproved assets are replaced or authorized. Preserve the current stack, routes, i18n, auth, payments, analytics, SEO, and deployment conventions.
+description: Inspect an explicitly provided web page and reconstruct its UI design language, layout, responsive behavior, motion, interactions, and layered media inside an existing project. Use for page-level URL-to-code work, high-fidelity landing-page or workbench reconstruction, competitor-inspired UI adaptation, and authorized migrations. Produces a durable design-language contract that separates reference evidence from target adaptation. Development-only reference assets may be downloaded into isolated directories, but production release is blocked until branding, copy, metadata, and unapproved assets are replaced or authorized. Preserve the current stack, routes, i18n, auth, payments, analytics, SEO, and deployment conventions.
 license: MIT
-compatibility: Requires browser automation for live-page inspection and a coding environment with filesystem access. Works best with Codex and other Agent Skills-compatible coding agents.
 ---
 
 # Reference Website Builder
@@ -20,6 +19,10 @@ inspect exact URL
 ```
 
 During reconstruction, target-site media may be used temporarily to preserve layered composition and visual accuracy. Temporary assets must remain isolated, traceable, and blocked from production release until replaced or explicitly authorized.
+
+## Runtime requirements
+
+Live-page inspection requires browser automation, and implementation requires a coding environment with filesystem access. The workflow is designed for Codex and other Agent Skills-compatible coding agents.
 
 ## Load supporting resources only when needed
 
@@ -132,6 +135,7 @@ public/__reference__/<slug>/        # temporary dev-served assets
 src/config/reference-assets.*       # centralized logical asset map
 
 docs/reference-build/<slug>/
+  design-language.md                 # observed rules, reusable principles, and target adaptation contract
   asset-manifest.json                # machine-readable source/status registry
   asset-provenance.md                # human-readable approval record
   replacement-checklist.md           # replacement progress and visual constraints
@@ -191,6 +195,10 @@ docs/reference-build/<slug>/
    - repository constraints
    - assumptions and blockers
 
+For reconstruction, reconstruction-and-adaptation, and owned-migration modes, also copy `templates/design-language.md`. Required output: `docs/reference-build/<slug>/design-language.md`. This is a durable artifact, not an optional summary.
+
+In adaptation-only mode, read the existing `design-language.md` before editing. If it is missing, create it from the available reconstruction evidence, label gaps as `Unknown`, and do not invent reference observations.
+
 If the request involves phishing, credential capture, deceptive impersonation, or fraudulent brand replication, stop and explain the issue.
 
 ### Phase 1 — Inspect the current repository
@@ -239,6 +247,8 @@ docs/reference-build/<slug>/
     <hostname>-mobile.png
 ```
 
+Populate `design-language.md` from this evidence. For each design area, separate the reference observation from its evidence status, reusable principle, and target-product adaptation. The local reconstruction contract may require close visual fidelity; the production adaptation contract must define what changes before release.
+
 ### Phase 3 — Create reconstruction brief and asset plan
 
 Copy `templates/original-design-brief.md` to `04-original-design-brief.md`.
@@ -254,6 +264,8 @@ For reconstruction mode, the brief must define:
 - which target assets are necessary temporarily
 - asset replacement constraints such as dimensions, crop, transparency, focal point, motion, and contrast
 - intended release state after this task
+
+Treat `design-language.md` as the canonical cross-component record for typography, colors, layout and spacing, surfaces and depth, component patterns, interactions and motion, responsive behavior, accessibility, and production differentiation. The brief may summarize it but must not duplicate or replace it.
 
 Create the asset artifacts before downloading target media:
 
@@ -299,6 +311,7 @@ The plan must include:
 - validation commands
 - temporary-asset cleanup and release strategy
 - risks to auth, credits, payments, analytics, SEO, and deployment
+- how implementation tokens and components map to `design-language.md`
 
 Classify files as:
 
@@ -329,6 +342,8 @@ Each spec must include:
 - accessibility requirements
 - integration points
 - acceptance criteria
+
+Link component-level decisions back to `design-language.md`. If a component needs an exception, record the reason in both places.
 
 Split specifications that exceed roughly 150 lines for one implementation unit.
 
@@ -365,6 +380,8 @@ At this stage, high visual similarity is expected. The QA report must still stat
 Release status: BLOCKED — temporary reference assets or target identity may remain.
 ```
 
+Recalibrate `design-language.md` from QA evidence: correct inaccurate observations or tokens, record intentional deviations, and preserve the separation between the local reconstruction contract and production adaptation contract.
+
 ### Phase 9 — Adapt for the user's product
 
 When adaptation is in scope:
@@ -378,6 +395,7 @@ When adaptation is in scope:
 7. Promote an entry to `approved` only after visual and provenance review.
 8. Connect real product data and existing business modules.
 9. Update unique SEO and locale content.
+10. Read and update `design-language.md`: implement the production adaptation contract, resolve every `Must replace` item, and record deliberate differences without discarding useful reusable principles.
 
 The page may keep the reference's useful layout or interaction pattern. Do not force arbitrary structural divergence.
 
@@ -396,6 +414,8 @@ Before claiming production readiness:
    - no target logo, favicon, OG image, brand term, copied marketing copy, testimonial, legal text, or proprietary font remains unless authorized
    - metadata and locale content belong to the user's product
    - asset provenance is complete
+   - the production adaptation contract in `design-language.md` is satisfied
+   - every `Must replace` item is replaced, removed, or explicitly authorized
 
 Recommended package-script pattern:
 
@@ -430,6 +450,7 @@ Final handoff must include:
 - validation commands and results
 - unresolved issues and risks
 - paths to research, manifest, replacement checklist, and QA artifacts
+- path to `design-language.md`, its QA recalibration status, and unresolved `Must replace` items
 
 ## Failure handling
 
@@ -446,8 +467,8 @@ Final handoff must include:
 
 ### Reconstruction complete
 
-The exact page has been inspected and rebuilt with verified layout, responsive behavior, motion, interactions, and layered-media composition. The project builds, and all temporary assets are isolated and registered. The result may remain prototype-only.
+The exact page has been inspected and rebuilt with verified layout, responsive behavior, motion, interactions, and layered-media composition. `design-language.md` records evidence-backed observations, reusable principles, target adaptations, and QA recalibration. The project builds, and all temporary assets are isolated and registered. The result may remain prototype-only.
 
 ### Production adaptation complete
 
-The production release gate passes; all shipped assets and identity elements are approved; metadata and content belong to the user's product; existing business systems still work; and the project passes its normal production validation.
+The production release gate passes; the production adaptation contract and all `Must replace` items in `design-language.md` are resolved; all shipped assets and identity elements are approved; metadata and content belong to the user's product; existing business systems still work; and the project passes its normal production validation.

@@ -17,6 +17,15 @@
 | Viewport | Section/state | Reference expectation | Observed | Evidence | Disposition |
 |---|---|---|---|---|---|
 
+## Design language recalibration
+
+- Canonical artifact: `design-language.md`
+- Last recalibrated:
+- Corrected observations/tokens:
+- Intentional deviations recorded:
+- Production adaptation contract status:
+- Unresolved `Must replace` items:
+
 ## Interaction QA
 
 ## Responsive QA

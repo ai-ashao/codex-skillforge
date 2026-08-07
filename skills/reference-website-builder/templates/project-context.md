@@ -14,6 +14,8 @@
 - Production-ready required:
 - PROTOTYPE_ONLY:
 - PRODUCTION_READY:
+- Design language path:
+- Production adaptation contract status:
 
 ## Target implementation
 

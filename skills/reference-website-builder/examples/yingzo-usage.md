@@ -12,6 +12,8 @@ Mode: reconstruction-and-adaptation.
 
 First reproduce the page's UI design language, topology, workbench layout, responsive behavior, hover states, scroll interactions, transitions, and layered media composition with high fidelity.
 
+Create and maintain `docs/reference-build/yingzo-homepage-v1/design-language.md`. Separate reference observations and evidence from reusable principles and Yingzo-specific adaptations. Recalibrate it after reconstruction QA, then resolve its production adaptation contract and every `Must replace` item before release.
+
 Development-only target assets may be downloaded when needed for fidelity, but they must be isolated under `.reference-assets/` and `public/__reference__/`, registered in `docs/reference-build/yingzo-homepage-v1/asset-manifest.json`, and referenced through a centralized asset map. Mark the reconstruction PROTOTYPE_ONLY and PRODUCTION_READY=false while any temporary asset remains.
 
 Preserve the repository's existing framework, i18n, authentication, credits, payments, analytics, consent, SEO routes, and Cloudflare deployment conventions. Do not scaffold a new app or upgrade the framework without a repository-driven reason.
@@ -27,7 +29,7 @@ Copy `scripts/check-reference-assets.mjs` into the target project and run it bef
 Use $reference-website-builder in reconstruction mode for https://inkfox.app/.
 Rebuild only that page in the current project and stop after visual and interaction QA.
 Temporary target assets are allowed only through the isolation workflow.
-The final status must remain PROTOTYPE_ONLY=true and PRODUCTION_READY=false.
+The final status must remain PROTOTYPE_ONLY=true and PRODUCTION_READY=false. Produce `design-language.md` even though production adaptation is out of scope.
 ```
 
 ## 只调研不改代码

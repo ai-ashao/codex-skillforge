@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 — 2026-08-07
+
+- Added mandatory `design-language.md` for reconstruction and migration modes.
+- Separated evidence-backed reference observations, reusable principles, and target-product adaptations.
+- Added explicit local reconstruction and production adaptation contracts.
+- Added `Must replace` production blockers to prevent competitor identity from shipping unchanged.
+- Required QA recalibration and links from planning, component specifications, QA, and handoff.
+
 ## 1.1.0 — 2026-08-07
 
 - Clarified that the skill is page-scoped and does not automatically crawl or clone a whole site.

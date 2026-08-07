@@ -10,6 +10,9 @@
 
 ## Tokens and measured styles
 
+- Related `design-language.md` rules:
+- Intentional exceptions and rationale:
+
 ## Responsive behavior
 
 ## Interaction model
