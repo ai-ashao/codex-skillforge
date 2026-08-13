@@ -50,6 +50,16 @@ Useful optional inputs:
 
 Do not require information that can be discovered from the repository or page. Record unresolved assumptions in the project context artifact.
 
+### Concise adaptation instruction
+
+Treat a direct instruction such as the following as `reconstruct-and-adapt` for the exact URL:
+
+```text
+https://inkfox.app/ 网站名称改成 example.com
+```
+
+In that case, inspect and reconstruct only `https://inkfox.app/`, then replace the visible site name, logo treatment, favicon, metadata, and other brand identity with `example.com`. Preserve the reference page's layout and interaction language where appropriate, but do not retain the target's identity or imply an affiliation. Any target-derived media or copy that remains is temporary and keeps the result blocked from production release.
+
 ## Page scope
 
 The scope is exactly the page or pages supplied by the user.
