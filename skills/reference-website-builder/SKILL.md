@@ -50,15 +50,16 @@ Useful optional inputs:
 
 Do not require information that can be discovered from the repository or page. Record unresolved assumptions in the project context artifact.
 
-### Concise adaptation instruction
+### URL and rebranding instruction
 
-Treat a direct instruction such as the following as `reconstruct-and-adapt` for the exact URL:
+Treat an instruction that pairs an explicit reference-page URL with a new site name as `reconstruct-and-adapt` for that exact URL:
 
 ```text
-https://inkfox.app/ 网站名称改成 example.com
+REFERENCE_PAGE_URL
+网站名称改成 NEW_SITE_NAME
 ```
 
-In that case, inspect and reconstruct only `https://inkfox.app/`, then replace the visible site name, logo treatment, favicon, metadata, and other brand identity with `example.com`. Preserve the reference page's layout and interaction language where appropriate, but do not retain the target's identity or imply an affiliation. Any target-derived media or copy that remains is temporary and keeps the result blocked from production release.
+In that case, inspect and reconstruct only the user-supplied reference URL, then replace the visible site name, logo treatment, favicon, metadata, and other brand identity with the user-supplied new name. Preserve the reference page's layout and interaction language where appropriate, but do not retain the target's identity or imply an affiliation. Any target-derived media or copy that remains is temporary and keeps the result blocked from production release. Do not embed third-party site names or URLs in the Skill's reusable instructions or examples; take them only from the current user request.
 
 ## Page scope
 
