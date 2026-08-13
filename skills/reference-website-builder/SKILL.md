@@ -52,14 +52,13 @@ Do not require information that can be discovered from the repository or page. R
 
 ### URL and rebranding instruction
 
-Treat an instruction that pairs an explicit reference-page URL with a new site name as `reconstruct-and-adapt` for that exact URL:
+Treat an instruction that supplies an explicit reference-page URL and names the desired final site as `reconstruct-and-adapt` for that exact URL:
 
 ```text
-REFERENCE_PAGE_URL
-网站名称改成 example.com
+高保真重建以下页面：example.com
 ```
 
-In that case, inspect and reconstruct only the user-supplied reference URL, then replace the visible site name, logo treatment, favicon, metadata, and other brand identity with `example.com`. Preserve the reference page's layout and interaction language where appropriate, but do not retain the target's identity or imply an affiliation. Any target-derived media or copy that remains is temporary and keeps the result blocked from production release. Do not embed third-party site names or URLs in the Skill's reusable instructions or examples; take them only from the current user request.
+In that case, inspect and reconstruct only the user-supplied reference URL, while presenting the resulting site as `example.com`: replace the visible site name, logo treatment, favicon, metadata, and other brand identity. Preserve the reference page's layout and interaction language where appropriate, but do not retain the target's identity or imply an affiliation. Any target-derived media or copy that remains is temporary and keeps the result blocked from production release. Do not embed third-party site names or URLs in the Skill's reusable instructions or examples; take them only from the current user request.
 
 ## Page scope
 

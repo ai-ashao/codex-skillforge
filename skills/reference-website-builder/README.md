@@ -164,8 +164,7 @@ node scripts/check-reference-assets.mjs
 
 ```text
 使用 $reference-website-builder 高保真重建以下页面：
-REFERENCE_PAGE_URL
-网站名称改成 example.com
+example.com
 
 只处理这个 URL，不自动遍历整站。
 重点还原 UI 设计语言、页面布局、控件质感、动画、交互、响应式和多层素材组合。
@@ -175,7 +174,7 @@ REFERENCE_PAGE_URL
 先完成高保真重建与视觉 QA，再将网站名称、Logo 处理、favicon、metadata 与其他品牌标识替换为 example.com，并替换或授权素材和文案。上线前运行生产门禁；存在临时素材或目标站身份内容时不得标记为可发布。
 ```
 
-参考页面 URL 由当前用户请求提供；示例使用 `example.com` 作为新站点名称。可复用的 Skill 说明和示例不得内置第三方网站或品牌。
+参考页面 URL 由当前用户请求提供，并仅作为重建参考；最终页面以 `example.com` 呈现。可复用的 Skill 说明和示例不得内置第三方网站或品牌。
 
 重建、重建并适配、自有迁移模式会在 `docs/reference-build/<slug>/design-language.md` 中持续维护设计规则。它允许本地阶段精确校准，但同时要求生产版本完成 `Production adaptation contract` 和 `Must replace`，防止把竞品身份与标志性表达原样带到上线版本。
 
