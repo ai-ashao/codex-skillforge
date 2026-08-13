@@ -103,7 +103,7 @@ A replacement is not ready merely because a new file exists. It must preserve th
 7. Record license/ownership.
 8. Mark it `approved`.
 9. Remove the temporary served file when no longer referenced.
-10. Run the production release gate.
+10. Run a release review when requested by the project owner.
 
 ## Do not download
 
@@ -121,4 +121,4 @@ Recommended `.gitignore` entry:
 .reference-assets/
 ```
 
-The machine-readable manifest and replacement checklist should normally be versioned. Whether temporary files under `public/__reference__/` are versioned depends on the team's prototype workflow, but they must never survive the production gate.
+The machine-readable manifest and replacement checklist should normally be versioned. Whether temporary files under `public/__reference__/` are versioned depends on the team's workflow; record their status and provenance for any release review.

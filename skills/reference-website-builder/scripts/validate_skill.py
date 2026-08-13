@@ -101,7 +101,6 @@ def main() -> int:
                 fail(f"SKILL.md references a missing resource: {rel}", errors)
 
         required_phrases = [
-            "PRODUCTION_READY=false",
             "public/__reference__/",
             "asset-manifest.json",
             "check-reference-assets.mjs",
@@ -142,8 +141,7 @@ def main() -> int:
             "Measured",
             "Reusable principle",
             "Target adaptation",
-            "PRODUCTION_READY=false",
-            "production blocker",
+            "unresolved items",
         ]
         for phrase in required_design_phrases:
             if phrase not in design_text:
@@ -177,7 +175,7 @@ def main() -> int:
     if gate.is_file():
         gate_text = gate.read_text(encoding="utf-8")
         if "process.exit(1)" not in gate_text:
-            fail("Production gate script does not appear to fail on blockers", errors)
+                fail("Reference-asset review script does not appear to fail on issues", errors)
         dangerous_gate = [
             r"rmSync\(",
             r"unlinkSync\(",
@@ -188,7 +186,7 @@ def main() -> int:
         ]
         for pattern in dangerous_gate:
             if re.search(pattern, gate_text):
-                fail(f"Production gate must be read-only; found pattern: {pattern}", errors)
+                fail(f"Reference-asset review must be read-only; found pattern: {pattern}", errors)
 
     print(f"Validating: {root}")
     if warnings:

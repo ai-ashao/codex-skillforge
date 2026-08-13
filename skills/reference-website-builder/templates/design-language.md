@@ -8,8 +8,6 @@ This artifact separates high-fidelity reference observation from the choices tha
 - Target product and route:
 - Mode: reconstruction / reconstruction-and-adaptation / owned-migration
 - Last recalibrated after QA:
-- PROTOTYPE_ONLY:
-- PRODUCTION_READY:
 
 ## Evidence rules
 
@@ -21,7 +19,7 @@ State what must be reproduced closely enough to compare the local page with the 
 
 ## Production adaptation contract
 
-State how the target product will retain useful design principles while becoming recognizably its own product. Define required changes to brand identity, copy, metadata, assets, signature styling, and any potentially confusing trade dress. For an owned migration, document which identity elements are authorized to remain. Until this contract is satisfied and the production gate passes, keep `PRODUCTION_READY=false`.
+State how the target product will retain useful design principles while becoming recognizably its own product. Define required changes to brand identity, copy, metadata, assets, signature styling, and any potentially confusing trade dress. For an owned migration, document which identity elements are authorized to remain. Record unresolved items for the project owner to review.
 
 ## Typography
 

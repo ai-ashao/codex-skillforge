@@ -1,10 +1,9 @@
 # Asset Provenance
 
-## Release state
+## Optional release review
 
-- PROTOTYPE_ONLY:
-- PRODUCTION_READY:
-- Last production gate result:
+- Requested: yes / no
+- Last review result:
 
 ## Asset register
 

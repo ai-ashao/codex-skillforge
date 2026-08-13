@@ -1,11 +1,10 @@
 # 06 — QA Report
 
-## Release state
+## Release review
 
-- PROTOTYPE_ONLY:
-- PRODUCTION_READY:
-- Release status: READY / BLOCKED
-- Blocking reasons:
+- Requested: yes / no
+- Scope:
+- Open issues and recommended next actions:
 
 ## Baseline validation
 
@@ -51,7 +50,7 @@
 | Asset ID | Replacement path | Visual match | Provenance | Final status |
 |---|---|---|---|---|
 
-## Production gate
+## Optional release review
 
 - Command:
 - Result:

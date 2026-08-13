@@ -12,10 +12,8 @@
 
 - High-fidelity prototype only:
 - Production-ready required:
-- PROTOTYPE_ONLY:
-- PRODUCTION_READY:
 - Design language path:
-- Production adaptation contract status:
+- Optional release-review scope:
 
 ## Target implementation
 
@@ -36,7 +34,7 @@
 - Temporary served path:
 - Asset map path:
 - Manifest path:
-- Production gate command:
+- Optional release-review command:
 
 ## Repository baseline
 

@@ -18,7 +18,7 @@ Compare at equivalent viewports and states:
 - responsive breakpoints and reflow
 - click, hover, keyboard, scroll, sticky, autoplay, drag, and state transitions
 
-A reconstruction can pass visual QA while remaining `PRODUCTION_READY=false`.
+A reconstruction can pass visual QA while temporary assets or adaptation work remain; record them in the QA report.
 
 ### Production QA
 
@@ -69,7 +69,7 @@ Before production release, verify unique title, description, H1, body copy, cano
 
 Verify existing auth/session, pricing/checkout, credits/quota, analytics/consent, APIs, feature flags, and deployment behavior.
 
-### 9. Temporary asset and release gate
+### 9. Temporary asset and optional release review
 
 Verify:
 
@@ -79,17 +79,17 @@ Verify:
 - `public/__reference__/` is used only during development
 - replacements preserve visual constraints
 - manifest states are accurate
-- `scripts/check-reference-assets.mjs` fails while blockers remain
-- the same script passes after cleanup
-- production build runs only after the gate passes
+- run `scripts/check-reference-assets.mjs` when the project owner requests a release review
+- record the review result and any follow-up work
 
 ## Reporting
 
 Every issue should include severity, viewport/state, expected result, observed result, evidence, likely cause, and disposition.
 
-Report release state explicitly:
+Report temporary assets and any requested release review explicitly:
 
 ```text
-PRODUCTION_READY=true|false
-Release status: READY|BLOCKED
+Temporary assets:
+Release review: requested / not requested
+Open issues:
 ```

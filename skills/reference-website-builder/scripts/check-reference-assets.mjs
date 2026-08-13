@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Non-destructive production release gate for page reconstruction projects.
+ * Non-destructive reference-asset review for page reconstruction projects.
  *
  * Usage:
  *   node scripts/check-reference-assets.mjs [project-root]
@@ -188,7 +188,7 @@ for (const file of candidateFiles) {
 const uniqueFailures = [...new Set(failures)];
 const uniqueWarnings = [...new Set(warnings)];
 
-console.log(`Reference asset production gate: ${projectRoot}`);
+console.log(`Reference asset review: ${projectRoot}`);
 
 if (uniqueWarnings.length) {
   console.log("Warnings:");
@@ -196,11 +196,10 @@ if (uniqueWarnings.length) {
 }
 
 if (uniqueFailures.length) {
-  console.error("Production release blocked:");
+  console.error("Reference-asset review found issues:");
   for (const failure of uniqueFailures) console.error(`  - ${failure}`);
-  console.error(`\nPRODUCTION_READY=false (${uniqueFailures.length} blocker(s))`);
+  console.error(`\n${uniqueFailures.length} issue(s) found.`);
   process.exit(1);
 }
 
-console.log("Production reference-asset checks passed.");
-console.log("PRODUCTION_READY=true");
+console.log("Reference-asset review passed.");

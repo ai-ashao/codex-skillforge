@@ -16,8 +16,7 @@ Required conditions:
 - isolated temporary directories
 - manifest registration
 - centralized asset mapping
-- no production-readiness claim
-- release gate remains blocked
+- provenance and replacement status recorded
 
 ### Production release
 

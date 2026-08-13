@@ -15,10 +15,10 @@ inspect exact URL
 → high-fidelity page reconstruction
 → visual and interaction QA
 → brand/content/asset adaptation
-→ production release gate
+→ optional release review
 ```
 
-During reconstruction, target-site media may be used temporarily to preserve layered composition and visual accuracy. Temporary assets must remain isolated, traceable, and blocked from production release until replaced or explicitly authorized.
+During reconstruction, target-site media may be used temporarily to preserve layered composition and visual accuracy. Temporary assets must remain isolated and traceable; the project owner decides whether and when to run a release review.
 
 ## Runtime requirements
 
@@ -58,7 +58,7 @@ Treat an instruction that supplies an explicit reference-page URL and names the 
 高保真重建以下页面：example.com
 ```
 
-In that case, inspect and reconstruct only the user-supplied reference URL, while presenting the resulting site as `example.com`: replace the visible site name, logo treatment, favicon, metadata, and other brand identity. Preserve the reference page's layout and interaction language where appropriate, but do not retain the target's identity or imply an affiliation. Any target-derived media or copy that remains is temporary and keeps the result blocked from production release. Do not embed third-party site names or URLs in the Skill's reusable instructions or examples; take them only from the current user request.
+In that case, inspect and reconstruct only the user-supplied reference URL, while presenting the resulting site as `example.com`: replace the visible site name, logo treatment, favicon, metadata, and other brand identity. Preserve the reference page's layout and interaction language where appropriate, but do not retain the target's identity or imply an affiliation. Record any target-derived media or copy that remains as temporary. Do not embed third-party site names or URLs in the Skill's reusable instructions or examples; take them only from the current user request.
 
 ## Page scope
 
@@ -85,8 +85,7 @@ In this mode:
 - Use measured computed styles and observed states rather than guessing.
 - Target-site images, video, SVG, screenshots, or decorative media may be downloaded **temporarily** when needed for fidelity.
 - Temporary assets must use the isolation workflow defined below.
-- The result must be marked `PROTOTYPE_ONLY` and `PRODUCTION_READY=false` while any unapproved target asset, brand term, original copy, favicon, OG image, or remote hotlink remains.
-- Do not claim that the reconstruction is safe to publish.
+- Record unapproved target assets, brand terms, original copy, favicons, OG images, and remote hotlinks in the manifest and handoff.
 
 ### 2. Adaptation mode
 
@@ -105,7 +104,7 @@ Structural changes are optional. Do not force arbitrary layout differences when 
 
 ### 3. Reconstruction-and-adaptation mode
 
-Run reconstruction first, validate fidelity, then perform adaptation and the production release gate in the same task.
+Run reconstruction first, validate fidelity, then perform adaptation and any release review requested by the project owner.
 
 ### 4. Owned migration mode
 
@@ -127,7 +126,7 @@ Inspect and document the page and current repository without modifying productio
 1. **Exact URL scope.** Reconstruct only explicit pages; never silently expand into whole-site cloning.
 2. **Existing project first.** Preserve the repository's framework, package manager, routes, conventions, and working business modules.
 3. **High fidelity before adaptation.** When reconstruction is requested, first reproduce observed layout, motion, interactions, and media composition accurately enough to judge the design.
-4. **Temporary does not mean publishable.** Every target-site asset used during development must be isolated, registered, and blocked from production until replaced or authorized.
+4. **Temporary assets remain traceable.** Every target-site asset used during development must be isolated and registered with its provenance and replacement status.
 5. **Centralized asset mapping.** Components must reference a project-level asset map, not scatter temporary paths throughout the codebase.
 6. **Interaction model before component code.** Determine whether behavior is click-, hover-, keyboard-, scroll-, intersection-, time-, drag-, or state-driven.
 7. **No guessing where inspection is possible.** Use screenshots, DOM inspection, computed styles, network-visible media URLs, and interaction sweeps.
@@ -297,12 +296,7 @@ Read `references/temporary-assets-guide.md`.
 4. Copy or transform only the needed files into `public/__reference__/<slug>/` or the framework-equivalent dev-served location.
 5. Create a centralized asset map using `templates/reference-assets.ts` or the project's native equivalent.
 6. Point components to logical asset entries, not direct temporary paths.
-7. Mark the page visibly in project documentation as:
-
-```text
-PROTOTYPE_ONLY=true
-PRODUCTION_READY=false
-```
+7. Record the temporary-asset policy and any known release risks in project documentation.
 
 Do not download scripts or execute code from the target site.
 
@@ -384,11 +378,7 @@ Compare the local implementation with the exact reference page at equivalent vie
 - loading, empty, error, success, disabled, and long-content states where relevant
 - build integrity and business-module regressions
 
-At this stage, high visual similarity is expected. The QA report must still state:
-
-```text
-Release status: BLOCKED — temporary reference assets or target identity may remain.
-```
+At this stage, high visual similarity is expected. The QA report must list any temporary reference assets or target identity that remains.
 
 Recalibrate `design-language.md` from QA evidence: correct inaccurate observations or tokens, record intentional deviations, and preserve the separation between the local reconstruction contract and production adaptation contract.
 
@@ -409,9 +399,9 @@ When adaptation is in scope:
 
 The page may keep the reference's useful layout or interaction pattern. Do not force arbitrary structural divergence.
 
-### Phase 10 — Production release gate
+### Phase 10 — Optional release review
 
-Before claiming production readiness:
+When the project owner requests a release review:
 
 1. Copy `scripts/check-reference-assets.mjs` into the target repository or implement an equivalent project-native check.
 2. Run it from the repository root.
@@ -438,12 +428,7 @@ Recommended package-script pattern:
 }
 ```
 
-If any blocker remains, report:
-
-```text
-PRODUCTION_READY=false
-Release status: BLOCKED
-```
+If any issue remains, report it with its scope and recommended next action.
 
 Never delete research evidence automatically. Remove or archive temporary served assets only after replacements pass QA.
 
@@ -455,7 +440,7 @@ Final handoff must include:
 - implemented page and route
 - fidelity and interaction QA results
 - which assets remain temporary, replacement-ready, approved, or removed
-- production gate result
+- release-review result, if one was requested
 - files changed
 - validation commands and results
 - unresolved issues and risks
@@ -469,9 +454,9 @@ Final handoff must include:
 - **Build already failing:** Record baseline failures and separate them from introduced failures.
 - **Dirty Git tree:** Do not reset or discard user changes; avoid automated worktree orchestration.
 - **Asset download fails:** Use a visual placeholder, keep the logical asset ID, and record the missing source.
-- **Unknown asset rights:** Temporary development use may continue in isolation, but production remains blocked.
+- **Unknown asset rights:** Continue only within the project's chosen temporary-asset policy and record the uncertainty.
 - **Complex backend behavior:** Reuse existing interfaces or define a front-end state contract; do not infer private APIs.
-- **Release requested with blockers:** Do not claim completion. List exact blockers and keep `PRODUCTION_READY=false`.
+- **Release requested with open issues:** List the exact issues and recommended next action.
 
 ## Completion standards
 
@@ -481,4 +466,4 @@ The exact page has been inspected and rebuilt with verified layout, responsive b
 
 ### Production adaptation complete
 
-The production release gate passes; the production adaptation contract and all `Must replace` items in `design-language.md` are resolved; all shipped assets and identity elements are approved; metadata and content belong to the user's product; existing business systems still work; and the project passes its normal production validation.
+The requested adaptation is complete, the production adaptation contract and `Must replace` items are addressed as directed by the project owner, existing business systems still work, and the project passes the requested validation.

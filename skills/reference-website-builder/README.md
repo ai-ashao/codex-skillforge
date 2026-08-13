@@ -4,7 +4,7 @@
 
 它的目标不是自动复制整个网站，而是：
 
-> 输入一个明确页面 URL，分析并高还原其 UI 设计语言、布局、响应式、动画、交互和多层素材组合；随后替换品牌、文案和素材，接入现有项目，最后通过生产发布门禁。
+> 输入一个明确页面 URL，分析并高还原其 UI 设计语言、布局、响应式、动画、交互和多层素材组合；随后按项目需要替换品牌、文案和素材并接入现有项目。
 
 ## 默认处理范围
 
@@ -54,15 +54,7 @@ docs/reference-build/<slug>/
 - 清理 `public/__reference__/`
 - 清除源码中的 `__reference__` 引用
 - 将 Manifest 状态全部变为 `approved` 或 `removed`
-- 通过生产发布门禁
-
-只要还有临时素材，结果必须标记：
-
-```text
-PROTOTYPE_ONLY=true
-PRODUCTION_READY=false
-Release status: BLOCKED
-```
+- 按项目需要执行素材与发布审查
 
 ## 主要能力
 

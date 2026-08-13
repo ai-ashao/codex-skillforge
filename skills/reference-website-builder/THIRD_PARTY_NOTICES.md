@@ -8,7 +8,7 @@ This skill was independently rewritten and adapted from workflow concepts found 
 
 Concepts retained in modified form include browser-based reconnaissance, page topology mapping, behavior inspection, component specifications, optional parallel worktrees, and visual QA.
 
-Major behavioral changes include explicit page-only scope, existing-project-first integration, separate reconstruction and adaptation stages, isolated development-only reference assets, centralized asset mapping, a production release gate, authorized migration mode, SEO/accessibility/performance checks, and removal of the mandatory Next.js scaffold.
+Major behavioral changes include explicit page-only scope, existing-project-first integration, separate reconstruction and adaptation stages, isolated development-only reference assets, centralized asset mapping, optional release review, authorized migration mode, SEO/accessibility/performance checks, and removal of the mandatory Next.js scaffold.
 
 ## Original MIT License
 

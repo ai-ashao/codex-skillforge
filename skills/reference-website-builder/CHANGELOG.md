@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Removed mandatory `PROTOTYPE_ONLY` and `PRODUCTION_READY` status markers.
+- Made reference-asset and release review optional at the project owner's discretion.
+
 ## 1.2.0 — 2026-08-07
 
 - Added mandatory `design-language.md` for reconstruction and migration modes.

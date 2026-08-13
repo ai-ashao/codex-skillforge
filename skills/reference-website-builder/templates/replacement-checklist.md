@@ -1,11 +1,10 @@
 # Reference Asset Replacement Checklist
 
-## Release state
+## Optional release review
 
-- PROTOTYPE_ONLY: true
-- PRODUCTION_READY: false
-- Production gate command:
-- Last gate result:
+- Requested: yes / no
+- Review command:
+- Last review result:
 
 ## Asset replacements
 
