@@ -81,4 +81,3 @@ class ValidationResult:
             "summary": self.summary(),
             "findings": [finding.to_dict() for finding in self.findings],
         }
-

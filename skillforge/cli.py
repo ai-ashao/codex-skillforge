@@ -61,4 +61,3 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except Exception as exc:  # pragma: no cover - defensive CLI boundary
         print("SkillForge internal error: {}".format(exc), file=sys.stderr)
         return 3
-
