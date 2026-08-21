@@ -1,0 +1,7 @@
+interface:
+  display_name: "SERP Siege"
+  short_description: "Turn chosen SEO directions into focused execution roadmaps."
+  default_prompt: "Use $serp-siege to package this chosen tool-site direction into a bounded first batch and execution roadmap."
+
+policy:
+  allow_implicit_invocation: true

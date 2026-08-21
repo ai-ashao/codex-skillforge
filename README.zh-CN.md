@@ -7,12 +7,13 @@
 [![GitHub forks](https://img.shields.io/github/forks/ai-ashao/codex-skillforge?style=flat-square)](https://github.com/ai-ashao/codex-skillforge/forks)
 [![Last commit](https://img.shields.io/github/last-commit/ai-ashao/codex-skillforge?style=flat-square)](https://github.com/ai-ashao/codex-skillforge/commits/main)
 
-这是一个持续维护的自定义 Codex skills 集合，用于评估和改进小型 Web 产品。每个 skill 都是自包含的：`SKILL.md` 说明适用场景和工作流，配套的参考资料、脚本与样例让结论可复查、可复现。
+这是一个持续维护的自定义 Codex skills 集合，用于评估和改进小型 Web 产品。每个 skill 的 `SKILL.md` 说明适用场景和工作流，配套的参考资料、脚本、样例和明确声明的依赖让结论可复查、可复现。
 
 ## 已收录 skills
 
 | Skill | 适用场景 | 确定性支持 |
 |---|---|---|
+| [`serp-siege`](skills/serp-siege/) | 将用户已经选定的网站、竞品或关键词转为覆盖矩阵、有限的 First Batch 和 MVP/P1/P2 执行 Roadmap。 | 执行报告结构校验、页面与词簇绑定规则、三个工作流 fixture；机会分析保持独立。 |
 | [`site-opportunity-scorecard`](skills/site-opportunity-scorecard/) | 判断一个 SEO 关键词簇或产品功能应成为独立网站、现有站专区、单一页面，还是暂缓/放弃。 | 加权机会分和拆站风险分、双语报告模板、报告结构校验。 |
 | [`website-audit-scorecard`](skills/website-audit-scorecard/) | 对已上线的网站或 Web 产品评估产品质量、UX、信任、SEO、技术可靠性和变现准备度。 | 证据加权的覆盖率与置信度、关键 gate、样例 fixture 与回归测试。 |
 | [`web-asset-pipeline`](skills/web-asset-pipeline/) | 将 AI、素材库、设计导出或截图中的视觉素材转为可上线的网站资源。 | 非破坏性素材审计、素材权利记录模板、格式与框架接入指南、回归测试。 |
@@ -34,9 +35,19 @@ cp -R codex-skillforge/skills/site-opportunity-scorecard ~/.codex/skills/
 
 将 `site-opportunity-scorecard` 替换为所需 skill，例如 `website-audit-scorecard`、`technical-seo-audit`、`web-asset-pipeline`、`competitive-ui-reverse-engineering` 或 `reference-website-builder`。安装后开启新的 Codex 对话；若未立即显示，再重启 Codex。
 
+`serp-siege` 可以独立安装：
+
+```bash
+cp -R codex-skillforge/skills/serp-siege ~/.codex/skills/
+```
+
 ## 使用
 
 通过名称调用 skill，并给出评估目标与约束：
+
+```text
+使用 $serp-siege 把已经选定的 image compressor 方向包成有限的 First Batch 和执行 Roadmap。
+```
 
 ```text
 Use $site-opportunity-scorecard to decide whether a Markdown-to-image workflow
@@ -83,6 +94,7 @@ skills/
 
 ```bash
 python3 -B -m unittest discover -s skills/website-audit-scorecard/tests -v
+python3 -B -m unittest discover -s skills/serp-siege/tests -v
 python3 -B skills/site-opportunity-scorecard/scripts/calculate_score.py \
   skills/site-opportunity-scorecard/assets/assessment-input-template.json
 python3 -B -m unittest discover -s skills/web-asset-pipeline/tests -v
