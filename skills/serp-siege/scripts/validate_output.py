@@ -31,6 +31,29 @@ PAGE_DECISIONS = {
     "REJECT",
 }
 NEW_PAGE_DECISIONS = PAGE_DECISIONS - {"SAME_PAGE", "REJECT"}
+CLUSTER_TYPES = {
+    "CORE",
+    "FORMAT",
+    "CONSTRAINT",
+    "USE_CASE",
+    "AUDIENCE",
+    "PLATFORM",
+    "ADJACENT_TOOL",
+    "CONTENT_SUPPORT",
+}
+PRIORITIES = {"P0", "P1", "P2", "HOLD", "REJECT"}
+FIRST_BATCH_GROUPS = {"CORE", "SUPPORTING", "ADJACENT"}
+COMPETITOR_FEATURE_STATES = {"YES", "PARTIAL", "NO", "MISSING"}
+CANDIDATE_FEATURE_STATES = {
+    "EXISTING",
+    "PLANNED",
+    "OPTIONAL",
+    "REJECTED",
+    "MISSING",
+}
+SERP_STRENGTHS = {"LOW", "MEDIUM", "HIGH", "VERY_HIGH", "MISSING"}
+GAPS = {"HIGH", "MEDIUM", "LOW", "MISSING"}
+REUSE_POTENTIALS = {"HIGH", "MEDIUM", "LOW"}
 REQUIRED_HEADINGS = {
     "Execution Frame",
     "Assumptions",
@@ -82,8 +105,10 @@ def headings(text: str) -> set[str]:
 
 
 def extract_field(text: str, label: str) -> str | None:
-    match = re.search(rf"\*\*{re.escape(label)}:\*\*\s*`?([^\n`]+)", text)
-    return match.group(1).strip() if match else None
+    match = re.search(
+        rf"\*\*{re.escape(label)}:\*\*\s*([^\n]+)", text, flags=re.MULTILINE
+    )
+    return match.group(1).strip().strip("`") if match else None
 
 
 def section_text(text: str, heading: str) -> str:
@@ -116,9 +141,15 @@ def data_rows(text: str, heading: str) -> list[list[str]]:
     return rows[1:] if rows else []
 
 
-def validate_evidence_cell(value: str, context: str, errors: list[str]) -> None:
+def evidence_labels(value: str) -> set[str]:
     label_text = value.split(":", 1)[0]
-    labels = {part.strip().strip("`") for part in label_text.split("+")}
+    return {part.strip().strip("`") for part in label_text.split("+")}
+
+
+def validate_evidence_cell(
+    value: str, context: str, errors: list[str], require_detail: bool = False
+) -> None:
+    labels = evidence_labels(value)
     invalid = labels - EVIDENCE_LABELS
     if invalid:
         errors.append(
@@ -126,6 +157,10 @@ def validate_evidence_cell(value: str, context: str, errors: list[str]) -> None:
             + ", ".join(sorted(invalid))
             + "."
         )
+    if require_detail and labels and labels != {"MISSING"}:
+        _, separator, detail = value.partition(":")
+        if not separator or not detail.strip():
+            errors.append(f"{context} requires a traceable source or observation.")
 
 
 def validate_evidence(text: str, errors: list[str]) -> None:
@@ -133,13 +168,13 @@ def validate_evidence(text: str, errors: list[str]) -> None:
         if re.search(rf"(?<![A-Z_]){deprecated}(?![A-Z_])", text):
             errors.append(f"Deprecated evidence label found: {deprecated}.")
 
-    for heading, evidence_index, minimum_columns in (
-        ("Assumptions", 1, 5),
-        ("Competitor Map", 6, 7),
-        ("Keyword Cluster Map", 7, 8),
-        ("Feature Coverage Map", 6, 7),
-        ("SERP Coverage Map", 3, 9),
-        ("Execution Constraints & Missing Evidence", 3, 6),
+    for heading, evidence_index, minimum_columns, require_detail in (
+        ("Assumptions", 1, 5, False),
+        ("Competitor Map", 6, 7, True),
+        ("Keyword Cluster Map", 7, 8, True),
+        ("Feature Coverage Map", 6, 7, True),
+        ("SERP Coverage Map", 3, 9, True),
+        ("Execution Constraints & Missing Evidence", 3, 6, False),
     ):
         for index, row in enumerate(data_rows(text, heading), start=1):
             if len(row) < minimum_columns:
@@ -147,10 +182,17 @@ def validate_evidence(text: str, errors: list[str]) -> None:
                     f"{heading} row {index} has fewer than {minimum_columns} columns."
                 )
                 continue
-            validate_evidence_cell(row[evidence_index], f"{heading} row {index}", errors)
+            validate_evidence_cell(
+                row[evidence_index],
+                f"{heading} row {index}",
+                errors,
+                require_detail=require_detail,
+            )
 
 
 def validate_page_map(text: str, errors: list[str]) -> None:
+    seen_clusters: set[str] = set()
+    seen_urls: set[str] = set()
     for index, row in enumerate(data_rows(text, "SEO Page Map"), start=1):
         if len(row) < 9:
             errors.append(f"SEO Page Map row {index} has fewer than 9 columns.")
@@ -160,8 +202,21 @@ def validate_page_map(text: str, errors: list[str]) -> None:
             errors.append(f"SEO Page Map row {index} has invalid Page Decision.")
         if not cluster or cluster in {"-", "MISSING"}:
             errors.append(f"SEO Page Map row {index} is not bound to a target cluster.")
+        elif cluster in seen_clusters:
+            errors.append(f"SEO Page Map row {index} duplicates Target Cluster: {cluster}.")
+        else:
+            seen_clusters.add(cluster)
         if decision in NEW_PAGE_DECISIONS and (not url or url in {"-", "MISSING"}):
             errors.append(f"SEO Page Map row {index} requires Proposed URL.")
+        if decision in NEW_PAGE_DECISIONS and parent not in {"", "-", "MISSING"}:
+            errors.append(
+                f"SEO Page Map new-page row {index} must not set Canonical Parent."
+            )
+        if url and url not in {"-", "MISSING"}:
+            if url in seen_urls:
+                errors.append(f"SEO Page Map row {index} duplicates Proposed URL: {url}.")
+            else:
+                seen_urls.add(url)
         if decision == "SAME_PAGE" and (not parent or parent in {"-", "MISSING"}):
             errors.append(f"SEO Page Map SAME_PAGE row {index} requires Canonical Parent.")
         if decision == "REJECT" and (not reason or reason in {"-", "MISSING"}):
@@ -175,22 +230,186 @@ def validate_page_map(text: str, errors: list[str]) -> None:
                 errors.append(f"SEO Page Map P0 row {index} is missing Shared Core.")
             if not reason or reason in {"-", "MISSING"}:
                 errors.append(f"SEO Page Map P0 row {index} is missing Reason.")
+        if priority not in PRIORITIES:
+            errors.append(f"SEO Page Map row {index} has invalid Priority.")
 
 
 def validate_first_batch(text: str, errors: list[str]) -> None:
+    groups: list[str] = []
+    seen_clusters: set[str] = set()
     for index, row in enumerate(data_rows(text, "First Batch"), start=1):
         if len(row) < 6:
             errors.append(f"First Batch row {index} has fewer than 6 columns.")
             continue
-        _, _, cluster, why_now, shared_capability, seo_role = row[:6]
+        _, group, cluster, why_now, shared_capability, seo_role = row[:6]
+        groups.append(group)
+        if group not in FIRST_BATCH_GROUPS:
+            errors.append(f"First Batch row {index} has invalid Group.")
         if not cluster or cluster in {"-", "MISSING"}:
             errors.append(f"First Batch row {index} is not bound to a target cluster.")
+        elif cluster in seen_clusters:
+            errors.append(f"First Batch row {index} duplicates Target Cluster: {cluster}.")
+        else:
+            seen_clusters.add(cluster)
         if not why_now or why_now in {"-", "MISSING"}:
             errors.append(f"First Batch row {index} is missing Why Now.")
         if not shared_capability or shared_capability in {"-", "MISSING"}:
             errors.append(f"First Batch row {index} is missing Shared Capability.")
         if not seo_role or seo_role in {"-", "MISSING"}:
             errors.append(f"First Batch row {index} is missing SEO Role.")
+
+    if groups.count("CORE") != 1:
+        errors.append("First Batch must contain exactly one CORE item.")
+
+    total = len(groups)
+    default_shape = (
+        8 <= total <= 15
+        and 3 <= groups.count("SUPPORTING") <= 5
+        and 2 <= groups.count("ADJACENT") <= 5
+    )
+    deviation = extract_field(section_text(text, "First Batch"), "First Batch Deviation")
+    if not default_shape and (not deviation or deviation.upper() == "NONE"):
+        errors.append(
+            "First Batch outside the default shape requires First Batch Deviation."
+        )
+
+
+def validate_keyword_map(text: str, errors: list[str]) -> None:
+    seen_clusters: set[str] = set()
+    for index, row in enumerate(data_rows(text, "Keyword Cluster Map"), start=1):
+        if len(row) < 8:
+            continue
+        cluster, cluster_type, _, _, _, decision, priority, _ = row[:8]
+        if not cluster or cluster in {"-", "MISSING"}:
+            errors.append(f"Keyword Cluster Map row {index} requires Cluster.")
+        elif cluster in seen_clusters:
+            errors.append(
+                f"Keyword Cluster Map row {index} duplicates Cluster: {cluster}."
+            )
+        else:
+            seen_clusters.add(cluster)
+        if cluster_type not in CLUSTER_TYPES:
+            errors.append(f"Keyword Cluster Map row {index} has invalid Type.")
+        if decision not in PAGE_DECISIONS:
+            errors.append(f"Keyword Cluster Map row {index} has invalid Page Decision.")
+        if priority not in PRIORITIES:
+            errors.append(f"Keyword Cluster Map row {index} has invalid Priority.")
+
+
+def validate_feature_map(text: str, errors: list[str]) -> None:
+    for index, row in enumerate(data_rows(text, "Feature Coverage Map"), start=1):
+        if len(row) < 7:
+            continue
+        competitor_states = row[1:4]
+        candidate, priority, evidence = row[4:7]
+        for state in competitor_states:
+            if state not in COMPETITOR_FEATURE_STATES:
+                errors.append(
+                    f"Feature Coverage Map row {index} has invalid competitor state."
+                )
+                break
+        if candidate not in CANDIDATE_FEATURE_STATES:
+            errors.append(f"Feature Coverage Map row {index} has invalid Candidate state.")
+        if priority not in PRIORITIES:
+            errors.append(f"Feature Coverage Map row {index} has invalid Priority.")
+        if candidate == "EXISTING" and not (
+            evidence_labels(evidence) & {"FIRST_PARTY", "LIVE_PUBLIC_OBSERVATION"}
+        ):
+            errors.append(
+                f"Feature Coverage Map row {index} marks Candidate EXISTING without first-party or live-public evidence."
+            )
+
+
+def validate_serp_map(text: str, errors: list[str]) -> None:
+    seen_clusters: set[str] = set()
+    for index, row in enumerate(data_rows(text, "SERP Coverage Map"), start=1):
+        if len(row) < 9:
+            continue
+        cluster, _, _, _, strength, gap, reuse, _, priority = row[:9]
+        if not cluster or cluster in {"-", "MISSING"}:
+            errors.append(f"SERP Coverage Map row {index} requires Cluster.")
+        elif cluster in seen_clusters:
+            errors.append(f"SERP Coverage Map row {index} duplicates Cluster: {cluster}.")
+        else:
+            seen_clusters.add(cluster)
+        if strength not in SERP_STRENGTHS:
+            errors.append(f"SERP Coverage Map row {index} has invalid SERP Strength.")
+        if gap not in GAPS:
+            errors.append(f"SERP Coverage Map row {index} has invalid Gap.")
+        if reuse not in REUSE_POTENTIALS:
+            errors.append(f"SERP Coverage Map row {index} has invalid Reuse Potential.")
+        if priority not in PRIORITIES:
+            errors.append(f"SERP Coverage Map row {index} has invalid Priority.")
+
+
+def rows_by_cluster(text: str, heading: str, cluster_index: int) -> dict[str, list[str]]:
+    return {
+        row[cluster_index]: row
+        for row in data_rows(text, heading)
+        if len(row) > cluster_index and row[cluster_index]
+    }
+
+
+def validate_cross_map_consistency(text: str, errors: list[str]) -> None:
+    keyword = rows_by_cluster(text, "Keyword Cluster Map", 0)
+    serp = rows_by_cluster(text, "SERP Coverage Map", 0)
+    seo = rows_by_cluster(text, "SEO Page Map", 3)
+    first_batch = rows_by_cluster(text, "First Batch", 2)
+
+    for cluster, row in keyword.items():
+        seo_row = seo.get(cluster)
+        if not seo_row:
+            errors.append(f"Keyword cluster {cluster} is missing from SEO Page Map.")
+            continue
+        if len(row) >= 7 and len(seo_row) >= 8:
+            if row[5] != seo_row[0]:
+                errors.append(f"Cluster {cluster} has inconsistent Page Decision.")
+            if row[6] != seo_row[7]:
+                errors.append(f"Cluster {cluster} has inconsistent Priority.")
+
+    for cluster, row in serp.items():
+        if cluster not in keyword:
+            errors.append(f"SERP cluster {cluster} is missing from Keyword Cluster Map.")
+        seo_row = seo.get(cluster)
+        if not seo_row:
+            errors.append(f"SERP cluster {cluster} is missing from SEO Page Map.")
+            continue
+        if len(row) >= 9 and len(seo_row) >= 8 and row[8] != seo_row[7]:
+            errors.append(f"Cluster {cluster} has inconsistent SERP/SEO Priority.")
+        if len(row) >= 8 and len(seo_row) >= 2:
+            serp_url, seo_url = row[7], seo_row[1]
+            if serp_url and seo_url and serp_url != seo_url:
+                errors.append(f"Cluster {cluster} has inconsistent Proposed Page.")
+
+    for cluster, row in seo.items():
+        if row and row[0] != "REJECT" and cluster not in keyword:
+            errors.append(f"SEO cluster {cluster} is missing from Keyword Cluster Map.")
+
+    for cluster, row in first_batch.items():
+        seo_row = seo.get(cluster)
+        if not seo_row:
+            errors.append(f"First Batch cluster {cluster} is missing from SEO Page Map.")
+            continue
+        if seo_row[7] != "P0":
+            errors.append(f"First Batch cluster {cluster} must be P0 in SEO Page Map.")
+        item = row[0]
+        if item.startswith("/") and seo_row[1] and item != seo_row[1]:
+            errors.append(f"First Batch cluster {cluster} has inconsistent URL.")
+
+    for cluster, row in seo.items():
+        if len(row) >= 8 and row[7] == "P0" and row[0] in NEW_PAGE_DECISIONS:
+            if cluster not in first_batch:
+                errors.append(f"SEO P0 cluster {cluster} is missing from First Batch.")
+
+    for cluster, row in serp.items():
+        if len(row) < 9 or row[8] != "P0":
+            continue
+        if row[4] == "MISSING" and row[5] == "MISSING":
+            batch_row = first_batch.get(cluster)
+            if batch_row and batch_row[1] != "CORE":
+                errors.append(
+                    f"SERP-missing P0 cluster {cluster} must be the First Batch CORE or move to HOLD."
+                )
 
 
 def validate_next_execution(text: str, errors: list[str]) -> None:
@@ -229,13 +448,42 @@ def validate(text: str) -> list[str]:
     if confidence not in {"HIGH", "MEDIUM", "LOW"}:
         errors.append("Missing or invalid Planning Confidence.")
 
-    for label in ("Selected direction", "Primary job", "Target scope", "Destination"):
+    for label in (
+        "Selected direction",
+        "Primary job",
+        "Target scope",
+        "Destination",
+        "Destination Basis",
+    ):
         if not extract_field(text, label):
             errors.append(f"Missing Execution Frame field: {label}.")
 
+    destination = extract_field(text, "Destination")
+    destination_basis = extract_field(text, "Destination Basis")
+    if destination_basis:
+        validate_evidence_cell(
+            destination_basis,
+            "Destination Basis",
+            errors,
+            require_detail=destination != "NOT_SUPPLIED",
+        )
+        basis_labels = evidence_labels(destination_basis)
+        if destination == "NOT_SUPPLIED" and basis_labels != {"MISSING"}:
+            errors.append("NOT_SUPPLIED Destination requires MISSING Destination Basis.")
+        if destination != "NOT_SUPPLIED" and not (
+            basis_labels & {"FIRST_PARTY", "USER_SUPPLIED_THIRD_PARTY"}
+        ):
+            errors.append(
+                "Supplied Destination requires FIRST_PARTY or USER_SUPPLIED_THIRD_PARTY basis."
+            )
+
     validate_evidence(text, errors)
+    validate_keyword_map(text, errors)
+    validate_feature_map(text, errors)
+    validate_serp_map(text, errors)
     validate_page_map(text, errors)
     validate_first_batch(text, errors)
+    validate_cross_map_consistency(text, errors)
 
     for index, row in enumerate(data_rows(text, "MVP / P0"), start=1):
         if len(row) < 4 or not row[3] or row[3] in {"-", "MISSING"}:

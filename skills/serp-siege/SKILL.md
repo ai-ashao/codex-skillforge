@@ -60,10 +60,13 @@ Do not turn an execution constraint into a verdict on the whole project.
 - Use exactly the evidence labels defined in the report template.
 - One query is not one page. Reject thin number, country, wording, and format permutations unless intent or workflow evidence justifies a distinct page.
 - Every proposed page must bind to a named cluster and shared capability.
+- A supplied destination must remain a user or upstream decision and include a traceable `Destination Basis`; otherwise use `NOT_SUPPLIED` and do not infer site architecture.
 - `SAME_PAGE` must name its canonical parent; `REJECT` may omit its proposed URL but must name its canonical parent and state the execution reason.
 - Every P0 item must state why it belongs now.
+- When both current SERP strength and gap are `MISSING`, only the single user-selected First Batch `CORE` may remain P0. Inferred `SUPPORTING` and `ADJACENT` entries must move to `HOLD` until the named evidence gate passes.
 - P1 and P2 may be `NONE`; never invent roadmap items to fill a section.
 - Keep the default First Batch to one core tool, 3–5 supporting entries, and 2–5 adjacent capabilities, normally 8–15 effective search entrances. Explain deviations.
+- Use `MISSING` for unverified candidate feature state. Reserve `EXISTING` for first-party or live-public evidence; do not use `PLANNED` as a substitute for an unknown current state.
 - Product coverage and SEO coverage must describe one roadmap, not separate wish lists.
 - Match the user's language; default to Simplified Chinese for Chinese requests while preserving the template's canonical machine-readable headings.
 

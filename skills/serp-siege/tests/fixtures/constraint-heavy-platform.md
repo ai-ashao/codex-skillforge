@@ -8,6 +8,7 @@
 - **Primary job:** help authorized users process their own media
 - **Target scope:** metadata and user-supplied-file workflows
 - **Destination:** `NOT_SUPPLIED`
+- **Destination Basis:** `MISSING`: no destination supplied
 - **Planning Confidence:** `LOW`
 
 ### Assumptions
@@ -63,7 +64,7 @@
 |---|---|---|---|---|---|
 | /media-metadata-viewer | `CORE` | media-metadata | preserves a safe executable workflow | local file parser | focused tool entry |
 
-The batch is narrowed to user-supplied files because platform authorization is not available.
+- **First Batch Deviation:** The batch is narrowed to user-supplied files because platform authorization is not available.
 
 ## Product Roadmap
 

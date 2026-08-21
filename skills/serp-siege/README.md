@@ -32,4 +32,4 @@ python3 -B skills/serp-siege/scripts/validate_output.py path/to/report.md
 python3 -B -m unittest discover -s skills/serp-siege/tests -v
 ```
 
-Validation confirms execution-report structure and page/cluster invariants. Live SERP accuracy and evidence truthfulness still require review.
+Validation confirms execution-report structure, destination provenance, evidence traceability, enum values, cross-map cluster consistency, unique page URLs, First Batch shape or deviation, and P0-to-First-Batch coverage. Live SERP accuracy and evidence truthfulness still require review.

@@ -8,6 +8,7 @@
 - **Primary job:** inspect Markdown document length
 - **Target scope:** one focused tool page and shared parser extensions
 - **Destination:** `EXISTING_SITE_PAGE`
+- **Destination Basis:** `FIRST_PARTY`: user-selected existing-site page
 - **Planning Confidence:** `LOW`
 
 ### Assumptions
@@ -62,7 +63,7 @@
 |---|---|---|---|---|---|
 | /markdown-word-counter | `CORE` | markdown-word-count | tests demand on the host | Markdown parser | focused entry page |
 
-The single-page batch is smaller than the default because this is an existing-site validation.
+- **First Batch Deviation:** The single-page batch is smaller than the default because this is an existing-site validation.
 
 ## Product Roadmap
 

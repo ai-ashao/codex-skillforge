@@ -23,6 +23,7 @@ Multiple labels may be joined with `+`. Never replace them with aliases such as 
 - **Primary job:**
 - **Target scope:**
 - **Destination:** [user-supplied destination or `NOT_SUPPLIED`]
+- **Destination Basis:** [`FIRST_PARTY`: user decision / `USER_SUPPLIED_THIRD_PARTY`: upstream handoff / `MISSING`: no destination supplied]
 - **Planning Confidence:** `HIGH` / `MEDIUM` / `LOW`
 
 ### Assumptions
@@ -81,7 +82,7 @@ Planning Confidence describes how complete the execution inputs are. It is not a
 |---|---|---|---|---|---|
 | /example | `CORE` | cluster-name | | | |
 
-[Explain deviations from the default 8–15 effective entrances.]
+- **First Batch Deviation:** `NONE` or [why the total or group mix differs from the default shape]
 
 ## Product Roadmap
 

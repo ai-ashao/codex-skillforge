@@ -31,6 +31,8 @@ Default shape:
 
 These are planning defaults, not quotas. Explain any smaller or larger batch. Never inflate the batch to meet a count.
 
+Use the report's `First Batch Deviation` field when the total or group mix falls outside the default shape. A deviation is valid when it explains why the smaller or larger batch is more coherent; the validator must not treat the defaults as absolute quotas.
+
 Each item must include:
 
 - a proposed URL or product item;
@@ -43,6 +45,7 @@ Each item must include:
 ## Roadmap discipline
 
 - MVP/P0 implements the smallest complete workflow and the shared core needed by the First Batch.
+- A cluster with both `SERP Strength: MISSING` and `Gap: MISSING` may remain P0 only when it is the single user-selected First Batch `CORE`. Missing-evidence clusters inferred during expansion must be `HOLD` until their named pre-development evidence gate passes.
 - P1 adds only evidenced demand that reuses the core and expands coverage coherently.
 - P2 records edge demand, higher complexity, or insufficient current evidence.
 - P1 or P2 may be `NONE` when no item meets the bar; do not invent work to populate a section.

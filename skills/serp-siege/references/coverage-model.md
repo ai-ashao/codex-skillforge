@@ -9,7 +9,11 @@ Required columns:
 | Feature | Competitor A | Competitor B | Competitor C | Candidate | Priority | Evidence |
 |---|---|---|---|---|---|---|
 
-Use `YES`, `PARTIAL`, `NO`, or `MISSING` for competitor coverage. Use `EXISTING`, `PLANNED`, `OPTIONAL`, or `REJECTED` for the candidate.
+Use `YES`, `PARTIAL`, `NO`, or `MISSING` for competitor coverage. Use `EXISTING`, `PLANNED`, `OPTIONAL`, `REJECTED`, or `MISSING` for the candidate.
+
+- `EXISTING` requires first-party or current live-public evidence about the candidate.
+- `PLANNED` means the execution roadmap intentionally adds the feature; it must not stand in for an unknown current implementation state.
+- `MISSING` means the candidate state has not been verified yet.
 
 Interpretation:
 
@@ -50,3 +54,5 @@ Use `HIGH`, `MEDIUM`, or `LOW` based on how much product logic, interface, valid
 ## Evidence discipline
 
 Every non-missing competitor and SERP claim must have a nearby source or observation. A matrix cell may summarize evidence, but its row must make the evidence type traceable.
+
+The Keyword Cluster Map, SERP Coverage Map, SEO Page Map, and First Batch must use the same stable cluster names. Rejected exclusion-only candidates may appear only in the SEO Page Map, but every non-`REJECT` SEO row must be defined in the Keyword Cluster Map.

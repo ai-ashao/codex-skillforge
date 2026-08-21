@@ -8,6 +8,7 @@
 - **Primary job:** prepare images for constrained uploads
 - **Target scope:** compression-first image utilities
 - **Destination:** `NOT_SUPPLIED`
+- **Destination Basis:** `MISSING`: no destination supplied
 - **Planning Confidence:** `MEDIUM`
 
 ### Assumptions
@@ -62,7 +63,7 @@
 |---|---|---|---|---|---|
 | /image-compressor | `CORE` | image-compression | validates the main task | client-side image pipeline | core tool entry |
 
-The fixture is intentionally smaller than the default batch because it tests structure, not market scope.
+- **First Batch Deviation:** The fixture is intentionally smaller than the default batch because it tests structure, not market scope.
 
 ## Product Roadmap
 
