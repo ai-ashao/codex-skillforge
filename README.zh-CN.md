@@ -18,9 +18,9 @@
 | [`site-opportunity-scorecard`](skills/site-opportunity-scorecard/) | 判断一个 SEO 关键词簇或产品功能应成为独立网站、现有站专区、单一页面，还是暂缓/放弃。 | 加权机会分和拆站风险分、双语报告模板、报告结构校验。 |
 | [`website-audit-scorecard`](skills/website-audit-scorecard/) | 对已上线的网站或 Web 产品评估产品质量、UX、信任、SEO、技术可靠性和变现准备度。 | 证据加权的覆盖率与置信度、关键 gate、样例 fixture 与回归测试。 |
 | [`web-asset-pipeline`](skills/web-asset-pipeline/) | 将 AI、素材库、设计导出或截图中的视觉素材转为可上线的网站资源。 | 非破坏性素材审计、素材权利记录模板、格式与框架接入指南、回归测试。 |
-| [`competitive-ui-reverse-engineering`](skills/competitive-ui-reverse-engineering/) | 将竞品页面参考和截图转为有差异化的页面方案。 | 证据分层的 UI 拆解、原创性边界、复用分析模板与素材流水线交接。 |
+| [`competitive-ui-reverse-engineering`](skills/competitive-ui-reverse-engineering/) | 当你还在研究一个或多个竞品页面或截图，需要先提炼页面结构、转化与交互模式，并形成原创的 `KEEP / CHANGE / ADD / OMIT` 方案或实现计划时使用；默认只分析，不直接改代码。 | 证据分层的 UI 拆解、原创性边界、复用分析模板与素材流水线交接。 |
 | [`technical-seo-audit`](skills/technical-seo-audit/) | 审计多语言公开 URL 的技术 SEO 信号，不把通用阈值误判为缺陷。 | 统一 Markdown/JSON 报告、有边界的 SSRF 防护、交付与索引信号、robots/sitemap、JSON-LD、hreflang 与 40+ 项回归测试。 |
-| [`reference-website-builder`](skills/reference-website-builder/) | 在现有产品中高保真重建明确指定的单个页面，再进行安全适配。 | 页面级证据模板、必需的设计语言契约、临时素材隔离、集中式素材映射、校验工具与生产发布门禁。 |
+| [`reference-website-builder`](skills/reference-website-builder/) | 当你已经给出明确页面 URL，并希望在现有项目中实际高保真重建该页、完成响应式与交互 QA，再替换品牌、文案和临时素材以安全适配时使用。 | 页面级证据模板、必需的设计语言契约、临时素材隔离、集中式素材映射、校验工具与生产发布门禁。 |
 
 这些是可复用的工作流与决策框架，并非 Google、Lighthouse、WCAG 或 AdSense 的官方评分体系。评分必须附带当前证据和覆盖范围说明。
 
