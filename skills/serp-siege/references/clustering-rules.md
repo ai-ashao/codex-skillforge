@@ -58,4 +58,4 @@ Reject mechanical variations based only on:
 - singular/plural, spelling, or word order;
 - format labels when the workflow and SERP are effectively identical.
 
-Do not discard rejected candidates silently. Record the parent cluster and rejection reason in the SEO Page Map. Rejecting a page does not reject the project.
+Do not discard rejected candidates silently. Record the canonical parent URL and rejection reason in the SEO Page Map. Rejecting a page does not reject the project.

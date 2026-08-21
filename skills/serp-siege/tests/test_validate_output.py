@@ -40,12 +40,24 @@ class ValidateOutputTests(unittest.TestCase):
     def test_reject_page_may_omit_url_but_requires_reason(self) -> None:
         text = (FIXTURES / "constraint-heavy-platform.md").read_text(encoding="utf-8")
         text = text.replace(
-            "| `REJECT` | | | protected-media-extraction | protected media downloader | acquisition | none | `REJECT` | outside the authorized execution scope |",
-            "| `REJECT` | | | protected-media-extraction | protected media downloader | acquisition | none | `REJECT` | |",
+            "| `REJECT` | | /media-metadata-viewer | protected-media-extraction | protected media downloader | acquisition | none | `REJECT` | outside the authorized execution scope |",
+            "| `REJECT` | | /media-metadata-viewer | protected-media-extraction | protected media downloader | acquisition | none | `REJECT` | |",
             1,
         )
         errors = validate_output.validate(text)
         self.assertIn("SEO Page Map REJECT row 2 requires Reason.", errors)
+
+    def test_reject_page_requires_canonical_parent(self) -> None:
+        text = (FIXTURES / "constraint-heavy-platform.md").read_text(encoding="utf-8")
+        text = text.replace(
+            "| `REJECT` | | /media-metadata-viewer | protected-media-extraction | protected media downloader | acquisition | none | `REJECT` | outside the authorized execution scope |",
+            "| `REJECT` | | | protected-media-extraction | protected media downloader | acquisition | none | `REJECT` | outside the authorized execution scope |",
+            1,
+        )
+        errors = validate_output.validate(text)
+        self.assertIn(
+            "SEO Page Map REJECT row 2 requires Canonical Parent.", errors
+        )
 
     def test_execution_report_requires_serp_coverage_map(self) -> None:
         text = (FIXTURES / "competitor-led-image-tools.md").read_text(encoding="utf-8")
@@ -69,6 +81,19 @@ class ValidateOutputTests(unittest.TestCase):
         text = text.replace("MODEL_INFERENCE", "INFERENCE", 1)
         errors = validate_output.validate(text)
         self.assertIn("Deprecated evidence label found: INFERENCE.", errors)
+
+    def test_invalid_competitor_evidence_label_is_rejected(self) -> None:
+        text = (FIXTURES / "competitor-led-image-tools.md").read_text(encoding="utf-8")
+        text = text.replace(
+            "`MODEL_INFERENCE`: fixture assumption",
+            "`BOGUS_EVIDENCE`: fixture assumption",
+            1,
+        )
+        errors = validate_output.validate(text)
+        self.assertIn(
+            "Competitor Map row 1 has invalid evidence labels: BOGUS_EVIDENCE.",
+            errors,
+        )
 
     def test_same_page_requires_canonical_parent(self) -> None:
         text = (FIXTURES / "competitor-led-image-tools.md").read_text(encoding="utf-8")

@@ -73,7 +73,7 @@ Planning Confidence describes how complete the execution inputs are. It is not a
 |---|---|---|---|---|---|---|---|---|
 | `NEW_TOOL_PAGE` | /example | | cluster-name | | | | `P0` | |
 | `SAME_PAGE` | | /example | synonym-cluster | | | | `HOLD` | merge into parent |
-| `REJECT` | | | thin-permutation | | | | `REJECT` | duplicate intent |
+| `REJECT` | | /example | thin-permutation | | | | `REJECT` | duplicate intent |
 
 ## First Batch
 

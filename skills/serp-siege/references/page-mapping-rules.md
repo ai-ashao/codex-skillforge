@@ -26,7 +26,7 @@ Use for guides, specifications, comparisons, or troubleshooting intent that help
 
 Use for thin permutations, unsupported demand, brand-navigation dependence, policy risk, duplicate intent, or ideas outside the candidate's product core.
 
-A rejected row may omit `Proposed URL`, but it must name the parent cluster and execution reason. Do not use `REJECT` to conclude that the user's whole project should be abandoned.
+A rejected row may omit `Proposed URL`, but it must name the canonical parent URL and execution reason. Do not use `REJECT` to conclude that the user's whole project should be abandoned.
 
 ## Page decision test
 

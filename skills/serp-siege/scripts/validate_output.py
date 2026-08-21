@@ -117,7 +117,8 @@ def data_rows(text: str, heading: str) -> list[list[str]]:
 
 
 def validate_evidence_cell(value: str, context: str, errors: list[str]) -> None:
-    labels = {part.strip() for part in value.split("+")}
+    label_text = value.split(":", 1)[0]
+    labels = {part.strip().strip("`") for part in label_text.split("+")}
     invalid = labels - EVIDENCE_LABELS
     if invalid:
         errors.append(
@@ -134,6 +135,10 @@ def validate_evidence(text: str, errors: list[str]) -> None:
 
     for heading, evidence_index, minimum_columns in (
         ("Assumptions", 1, 5),
+        ("Competitor Map", 6, 7),
+        ("Keyword Cluster Map", 7, 8),
+        ("Feature Coverage Map", 6, 7),
+        ("SERP Coverage Map", 3, 9),
         ("Execution Constraints & Missing Evidence", 3, 6),
     ):
         for index, row in enumerate(data_rows(text, heading), start=1):
@@ -161,6 +166,10 @@ def validate_page_map(text: str, errors: list[str]) -> None:
             errors.append(f"SEO Page Map SAME_PAGE row {index} requires Canonical Parent.")
         if decision == "REJECT" and (not reason or reason in {"-", "MISSING"}):
             errors.append(f"SEO Page Map REJECT row {index} requires Reason.")
+        if decision == "REJECT" and (not parent or parent in {"-", "MISSING"}):
+            errors.append(
+                f"SEO Page Map REJECT row {index} requires Canonical Parent."
+            )
         if priority == "P0":
             if not shared_core or shared_core in {"-", "MISSING"}:
                 errors.append(f"SEO Page Map P0 row {index} is missing Shared Core.")

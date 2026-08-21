@@ -55,7 +55,7 @@
 | Page Decision | Proposed URL | Canonical Parent | Target Cluster | Primary Keyword | Search Intent | Shared Core | Priority | Reason |
 |---|---|---|---|---|---|---|---|---|
 | `NEW_TOOL_PAGE` | /media-metadata-viewer | | media-metadata | media metadata viewer | tool | local file parser | `P0` | lawful user-supplied-file workflow |
-| `REJECT` | | | protected-media-extraction | protected media downloader | acquisition | none | `REJECT` | outside the authorized execution scope |
+| `REJECT` | | /media-metadata-viewer | protected-media-extraction | protected media downloader | acquisition | none | `REJECT` | outside the authorized execution scope |
 
 ## First Batch
 

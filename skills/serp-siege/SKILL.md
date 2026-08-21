@@ -60,7 +60,7 @@ Do not turn an execution constraint into a verdict on the whole project.
 - Use exactly the evidence labels defined in the report template.
 - One query is not one page. Reject thin number, country, wording, and format permutations unless intent or workflow evidence justifies a distinct page.
 - Every proposed page must bind to a named cluster and shared capability.
-- `SAME_PAGE` must name its canonical parent; `REJECT` may omit a URL but must state the execution reason.
+- `SAME_PAGE` must name its canonical parent; `REJECT` may omit its proposed URL but must name its canonical parent and state the execution reason.
 - Every P0 item must state why it belongs now.
 - P1 and P2 may be `NONE`; never invent roadmap items to fill a section.
 - Keep the default First Batch to one core tool, 3–5 supporting entries, and 2–5 adjacent capabilities, normally 8–15 effective search entrances. Explain deviations.
