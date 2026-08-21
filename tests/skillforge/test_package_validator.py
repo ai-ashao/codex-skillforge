@@ -468,6 +468,7 @@ class CurrentRepositorySkillTests(unittest.TestCase):
         repository_root = Path(__file__).resolve().parents[2]
         skills_root = repository_root / "skills"
         expected = {
+            "adapt-reference-site",
             "competitive-ui-reverse-engineering",
             "reference-website-builder",
             "serp-siege",
